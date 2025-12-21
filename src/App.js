@@ -307,7 +307,7 @@ function App() {
           </div>
         </div>
 
-        <div className="calendar">
+        <div className="calendar" style={{ marginBottom: 0 }}>
           <div className="calendar-header">
             <h2>{new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(' de ', ' ')}</h2>
           </div>
@@ -403,7 +403,7 @@ function App() {
 
 
         {/* Barra de arrastar para check-in */}
-        <div style={{ marginTop: 32, marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
+        <div style={{ marginTop: 20, marginBottom: 0, display: 'flex', justifyContent: 'center' }}>
           <DragCheckinBar
             checkedInToday={checkedInToday}
             onCheckin={() => completeCheckInForDate(new Date())}
