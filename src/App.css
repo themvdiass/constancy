@@ -156,7 +156,7 @@ h1 {
   font-weight: bold;
   line-height: 1;
   margin-bottom: 5px;
-  background: linear-gradient(135deg, #eabb66 0%, #b80f0f 100%);
+  background: linear-gradient(135deg, #fed405 0%, #b80f0f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -260,7 +260,7 @@ h1 {
 
 .goals-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ff9500 0%, #ff6b3f 100%);
+  background: linear-gradient(90deg, #fed405 0%, #ff6b3f 100%);
   transition: width 0.3s ease;
   border-radius: 4px;
 }
