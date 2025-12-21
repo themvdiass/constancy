@@ -74,7 +74,7 @@
   background: white;
   border-radius: 14px;
   padding: 20px;
-  max-width: 360px;
+  max-width: 400px;
   width: calc(100% - 40px);
   margin: 20px auto;
   box-sizing: border-box;
@@ -324,8 +324,20 @@ h1 {
 
 .week-row {
   position: relative;
-  margin-bottom: 10px;
-  height: 56px;
+  margin-bottom: 6px;
+  height: 32px;
+}
+
+@media (max-width: 500px) {
+  .week-row {
+    height: 35px;
+  }
+}
+
+@media (max-width: 370px) {
+  .week-row {
+    height: 20px;
+  }
 }
 
 .week-bar {
@@ -363,6 +375,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
 }
 
 .week-grid.active .day {
@@ -390,7 +403,7 @@ h1 {
 
 /* Dia não marcado - cinzento desabilitado */
 .day.unchecked {
-  background-color: #f0f0f0; /* fundo cinza claro */
+  /* background-color: #f0f0f0;  */
   color: #d0d0d0;
   border-radius: 5px;
   border-color: #d0d0d0; /* borda cinza */
