@@ -239,24 +239,20 @@ function App() {
     <div className="App">
       {/* animação de sucesso removida conforme solicitado */}
       <div className="container">
+
+        {/* Dias de ofensiva */}
         <div className="streak-container">
           <div className={`streak-display ${streak === 0 ? 'grayscale' : ''}`}>
             <div className={`streak-content${checkedInToday ? '' : ' grayscale'}`}> 
               <div className="streak-number">{streak}</div>
-              <div className="streak-label">dias de ofensiva!</div>
+              <div className="streak-label">{streak === 1 ? 'dia de ofensiva!' : 'dias de ofensiva!'}</div>
             </div>
             <img src={fireIcon} alt="fire" className={`streak-icon${checkedInToday ? '' : ' grayscale'}`} />
           </div>
         </div>
 
-        <div className="motivation-box">
-          <img src={fireIcon} alt="fire" className="motivation-icon" />
-          <div className="motivation-text">
-            <strong>Mantenha a sua ofensiva perfeita:</strong> Siga focado(a) todos os dias!
-          </div>
-        </div>
-
-        <div className="goals-container">
+        {/* Meta de ofensiva */}
+        <div className="goals-container" style={{ marginTop: 10 }}>
           <h3>Meta de ofensiva</h3>
           {(() => {
             // Base deslizante de 15 em 15: 0,5,10,15 -> quando atingir 15 vira 15,20,25,30 etc.
@@ -301,6 +297,14 @@ function App() {
               </div>
             );
           })()}
+        </div>
+
+        {/* Mantenha sua ofensiva */}
+        <div className="motivation-box">
+          <img src={fireIcon} alt="fire" className="motivation-icon" />
+          <div className="motivation-text">
+            <strong>Mantenha a sua ofensiva perfeita:</strong> Siga focado(a) todos os dias!
+          </div>
         </div>
 
         <div className="calendar">
