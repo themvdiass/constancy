@@ -1,0 +1,24 @@
+<svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Yellow outer glow -->
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Yellow outer flame -->
+  <path d="M 60 15 Q 85 35 85 70 Q 85 110 60 155 Q 35 110 35 70 Q 35 35 60 15 Z" fill="#FFD700" opacity="0.85" filter="url(#glow)"/>
+  
+  <!-- Orange middle flame -->
+  <path d="M 60 35 Q 78 50 78 75 Q 78 105 60 145 Q 42 105 42 75 Q 42 50 60 35 Z" fill="#FF9500" opacity="0.9"/>
+  
+  <!-- Red core -->
+  <path d="M 60 50 Q 72 62 72 85 Q 72 105 60 135 Q 48 105 48 85 Q 48 62 60 50 Z" fill="#FF5533" opacity="0.95"/>
+  
+  <!-- White center light -->
+  <ellipse cx="60" cy="80" rx="14" ry="22" fill="white" opacity="0.85"/>
+</svg>
