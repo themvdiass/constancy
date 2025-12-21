@@ -72,8 +72,12 @@
 }
 html, body {
   height: 100%;
-  overflow: hidden !important;
   overscroll-behavior: contain;
+  /* touch-action: none; */
+}
+
+body.no-scroll {
+  overflow: hidden !important;
   touch-action: none;
 }
 

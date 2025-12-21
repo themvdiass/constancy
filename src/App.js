@@ -1,3 +1,18 @@
+  // Impede rolagem apenas se todo o conteúdo couber na tela
+  useEffect(() => {
+    function updateScrollLock() {
+      const root = document.getElementById('root');
+      if (!root) return;
+      if (root.scrollHeight <= window.innerHeight) {
+        document.body.classList.add('no-scroll');
+      } else {
+        document.body.classList.remove('no-scroll');
+      }
+    }
+    updateScrollLock();
+    window.addEventListener('resize', updateScrollLock);
+    return () => window.removeEventListener('resize', updateScrollLock);
+  }, []);
 import React, { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
 import './App.css';
