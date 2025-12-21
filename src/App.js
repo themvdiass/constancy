@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Icon } from '@iconify/react';
 import './App.css';
+
 import fireIcon from './assets/fire.png';
+import DragCheckinBar from './DragCheckinBar';
+import DragResetBar from './DragResetBar';
 
 function App() {
   const [streak, setStreak] = useState(0);
@@ -393,7 +397,28 @@ function App() {
           </div>
         </div>
 
-        {/* Botão removido. Check-in agora é feito ao segurar o dia atual no calendário. */}
+
+        {/* Barra de arrastar para check-in */}
+        <div style={{ marginTop: 32, marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
+          <DragCheckinBar
+            checkedInToday={checkedInToday}
+            onCheckin={() => completeCheckInForDate(new Date())}
+          />
+        </div>
+
+        {/* Barra de arrastar para resetar tudo */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+          <DragResetBar
+            onReset={() => {
+              setCheckInDates([]);
+              setLastCheckInDate(null);
+              setCheckedInToday(false);
+              setStreak(0);
+              localStorage.removeItem('checkInData');
+            }}
+          />
+        </div>
+
 
         {/* Mensagem removida conforme solicitado */}
       </div>
