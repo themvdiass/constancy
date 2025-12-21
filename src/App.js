@@ -335,7 +335,6 @@ function App() {
               }
 
               return weeks.map((wk, idx) => {
-                const weekHasChecked = wk.some(d => d && isDayCheckedIn(d));
                 return (
                   <div className="week-row" key={idx}>
                     <div className="week-grid">
@@ -343,18 +342,48 @@ function App() {
                         if (!d) return <div key={i} className="day empty"></div>;
                         const cls = getDayClass(d);
                         const { isPrevChecked, isNextChecked } = isConsecutiveCheckedIn(d);
-                        // Adiciona efeito pulsar ao dia de hoje, mesmo sem check-in
                         const isToday = d === today.getDate() && today.getMonth() === currentMonth && today.getFullYear() === currentYear;
                         const pulseClass = isToday ? 'pulse-today' : '';
-                        return (
-                          <div
-                            key={i}
-                            className={`${cls} ${isPrevChecked ? 'connected-left' : ''} ${isNextChecked ? 'connected-right' : ''} ${pulseClass}`}
-                            onClick={() => handleDayClick(d)}
-                          >
-                            {d}
-                          </div>
-                        );
+                        if (isToday) {
+                          return (
+                            <div
+                              key={i}
+                              className={`${cls} ${isPrevChecked ? 'connected-left' : ''} ${isNextChecked ? 'connected-right' : ''} ${pulseClass}`}
+                              onMouseDown={checkedInToday ? undefined : handleMouseDown}
+                              onMouseUp={checkedInToday ? undefined : handleMouseUp}
+                              onMouseLeave={checkedInToday ? undefined : handleMouseUp}
+                              onTouchStart={checkedInToday ? undefined : handleTouchStart}
+                              onTouchEnd={checkedInToday ? undefined : handleTouchEnd}
+                              style={{ cursor: checkedInToday ? 'default' : 'pointer', position: 'relative' }}
+                            >
+                              {d}
+                              {/* Barra de progresso visual ao pressionar */}
+                              {isPressed && !checkedInToday && (
+                                <div style={{
+                                  position: 'absolute',
+                                  left: 0,
+                                  bottom: 0,
+                                  height: 4,
+                                  width: `${pressProgress}%`,
+                                  background: 'rgba(255, 111, 60, 0.5)',
+                                  borderRadius: 2,
+                                  transition: 'width 0.1s linear',
+                                  zIndex: 2
+                                }} />
+                              )}
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div
+                              key={i}
+                              className={`${cls} ${isPrevChecked ? 'connected-left' : ''} ${isNextChecked ? 'connected-right' : ''}`}
+                              style={{ cursor: 'default' }}
+                            >
+                              {d}
+                            </div>
+                          );
+                        }
                       })}
                     </div>
                   </div>
@@ -364,20 +393,7 @@ function App() {
           </div>
         </div>
 
-        <button
-          className={`checkin-button orange ${checkedInToday ? 'disabled' : ''} ${isPressed ? 'pressed' : ''}`}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          disabled={checkedInToday}
-        >
-          <div className="button-content">
-            {checkedInToday ? '✓ Check-in' : 'Check-in'}
-            {isPressed && !checkedInToday && <div className="press-progress" style={{ width: `${pressProgress}%` }}></div>}
-          </div>
-        </button>
+        {/* Botão removido. Check-in agora é feito ao segurar o dia atual no calendário. */}
 
         {/* Mensagem removida conforme solicitado */}
       </div>
