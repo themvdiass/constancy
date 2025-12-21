@@ -46,8 +46,8 @@ export default function DragResetBar({ onReset }) {
       ref={barRef}
       className="drag-reset-bar"
       style={{
-        width: 300,
-        height: 40,
+        width: 350,
+        height: 50,
         background: 'linear-gradient(135deg, #b80f0f 0%, #ff6b3f 100%)',
         borderRadius: 22,
         position: 'relative',

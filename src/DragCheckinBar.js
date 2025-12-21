@@ -47,8 +47,8 @@ export default function DragCheckinBar({ checkedInToday, onCheckin }) {
       ref={barRef}
       className="drag-checkin-bar"
       style={{
-        width: 300,
-        height: 40,
+        width: 350,
+        height: 50,
         background: checkedInToday ? 'linear-gradient(90deg, #a8b5d1 0%, #9ca3b8 100%)' : 'linear-gradient(90deg, #ff9500 0%, #ff6b3f 100%)',
         borderRadius: 22,
         position: 'relative',
