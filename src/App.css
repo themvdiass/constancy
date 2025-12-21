@@ -68,6 +68,13 @@
   align-items: center;
   justify-content: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+}
+html, body {
+  height: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 .container {
