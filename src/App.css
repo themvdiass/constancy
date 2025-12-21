@@ -76,9 +76,30 @@ html, body {
   /* touch-action: none; */
 }
 
-body.no-scroll {
-  overflow: hidden !important;
-  touch-action: none;
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  min-height: 100vh;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* overflow: hidden; removido para permitir rolagem se necessário */
+}
+
+@media (max-height: 700px), (max-width: 400px) {
+  .App {
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-y: auto;
+    min-height: 100vh;
+    height: auto;
+  }
 }
 
 .container {
