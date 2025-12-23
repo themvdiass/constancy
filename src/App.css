@@ -271,15 +271,11 @@ h1 {
 }
 
 .calendar-day.today {
-  background: #333;
-  color: white;
-  font-weight: 700;
+  border: 2px solid #FF4500;
 }
 
 .App.dark-mode .calendar-day.today {
-  background: #555;
-  color: white;
-  font-weight: 700;
+  border: 2px solid #FF6B35;
 }
 
 .calendar-day.checked {
@@ -289,9 +285,15 @@ h1 {
 }
 
 .calendar-day.today.checked {
-  background: #DC143C !important;
+  background: #FF4500 !important;
+  border: none;
   color: white;
   font-weight: 700;
+}
+
+.App.dark-mode .calendar-day.today.checked {
+  background: #FF6B35 !important;
+  border: none;
 }
 
 .calendar-day:not(.empty):not(.today):hover {
