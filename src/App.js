@@ -1,493 +1,412 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Icon } from '@iconify/react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
-import fireIcon from './assets/fire.png';
-import DragCheckinBar from './DragCheckinBar';
-import DragResetBar from './DragResetBar';
-
 function App() {
-  const TIME_ZONE = 'America/Sao_Paulo';
-  const [streak, setStreak] = useState(0);
-  const [lastCheckInDate, setLastCheckInDate] = useState(null);
-  const [checkedInToday, setCheckedInToday] = useState(false);
-  const [checkInDates, setCheckInDates] = useState([]);
-  const [isPressed, setIsPressed] = useState(false);
-  const [pressProgress, setPressProgress] = useState(0);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const pressTimerRef = useRef(null);
+  const [checkedDays, setCheckedDays] = useState([]);
+  const [timeLeft, setTimeLeft] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
-  const today = new Date();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const monthNames = [
+    'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
+    'jul', 'ago', 'set', 'out', 'nov', 'dez'
+  ];
 
-  // Carregar dados do localStorage ao montar
+  const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+
   useEffect(() => {
-    const savedData = localStorage.getItem('checkInData');
-    if (savedData) {
-      const { lastCheckInDate: savedDate, checkInDates: savedDates } = JSON.parse(savedData);
-      const normalize = (d) => toTZDateString(new Date(d));
-      const dates = (savedDates || []).map(normalize);
-      const lastDateNorm = savedDate ? normalize(savedDate) : null;
-      setCheckInDates(dates);
-      setLastCheckInDate(lastDateNorm);
-
-      // determinar se já fez check-in hoje e calcular streak baseado no histórico
-      const setDates = new Set(dates);
-      const todayString = toTZDateString(new Date());
-      setCheckedInToday(setDates.has(todayString));
-      setStreak(computeStreakFromSet(setDates));
-
-      // persistir normalização
-      localStorage.setItem('checkInData', JSON.stringify({
-        lastCheckInDate: lastDateNorm,
-        checkInDates: dates
-      }));
+    const saved = localStorage.getItem('checkedDays');
+    if (saved) {
+      setCheckedDays(JSON.parse(saved));
     }
-  }, []);
-
-  // helper: formata date para YYYY-MM-DD no fuso de Brasília
-  const toTZDateString = (d) => new Intl.DateTimeFormat('en-CA', {
-    timeZone: TIME_ZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).format(d);
-
-  // contar dias de prática no mês atual
-  const getDaysOfPracticeThisMonth = () => {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    return checkInDates.filter(dateStr => {
-      const date = new Date(dateStr);
-      return date.getFullYear() === year && date.getMonth() === month;
-    }).length;
-  };
-  const isWeekendTZ = (d) => {
-    const weekday = new Intl.DateTimeFormat('en-US', { timeZone: TIME_ZONE, weekday: 'short' }).format(d);
-    return weekday === 'Sat' || weekday === 'Sun';
-  };
-  const getActiveStreakSet = (dateSet) => {
-    const set = new Set();
-    const weekendBuffer = [];
-    const oneDay = 24 * 60 * 60 * 1000;
-    const todayStr = toTZDateString(new Date());
-    let curr = dateSet.has(todayStr) ? new Date() : new Date(Date.now() - oneDay);
-    while (true) {
-      const s = toTZDateString(curr);
-      if (dateSet.has(s)) {
-        // flush fins de semana entre dois check-ins
-        if (weekendBuffer.length > 0) {
-          weekendBuffer.forEach(ws => set.add(ws));
-          weekendBuffer.length = 0;
-        }
-        set.add(s);
-        curr = new Date(curr.getTime() - oneDay);
-      } else if (isWeekendTZ(curr)) {
-        // bufferizar fins de semana, só irão para o set quando encontrarmos um check-in anterior
-        weekendBuffer.push(s);
-        curr = new Date(curr.getTime() - oneDay);
-        continue;
-      } else {
-        // dia útil sem check-in: quebra a sequência e descarta buffer de fim de semana
-        break;
-      }
-    }
-    return set;
-  };
-
-  const activeStreakSet = useMemo(() => getActiveStreakSet(new Set(checkInDates)), [checkInDates, checkedInToday]);
-  const computeStreakFromSet = (dateSet) => {
-    const todayStr = toTZDateString(new Date());
-    const oneDay = 24 * 60 * 60 * 1000;
-
-    // começar em hoje se marcado, senão em ontem
-    let curr = dateSet.has(todayStr) ? new Date() : new Date(Date.now() - oneDay);
-    let count = 0;
-
-    while (true) {
-      const s = toTZDateString(curr);
-      if (dateSet.has(s)) {
-        // dia com check-in: conta
-        count += 1;
-        curr = new Date(curr.getTime() - oneDay);
-      } else if (isWeekendTZ(curr)) {
-        // fim de semana sem check-in: não quebra a sequência, apenas avança
-        curr = new Date(curr.getTime() - oneDay);
-        continue;
-      } else {
-        // dia útil sem check-in: quebra a sequência
-        break;
-      }
-    }
-
-    return count;
-  };
-
-  // Monitorar mudanças de mês
-  useEffect(() => {
-    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' });
-    const parts = fmt.format(new Date()).split('-');
-    const y = parseInt(parts[0], 10);
-    const m = parseInt(parts[1], 10) - 1;
-    setCurrentMonth(m);
-    setCurrentYear(y);
-  }, []);
-
-  const handleMouseDown = () => {
-    if (checkedInToday) return;
     
-    setIsPressed(true);
-    setPressProgress(0);
-    let progress = 0;
-
-    pressTimerRef.current = setInterval(() => {
-      progress += 100 / 20; // 2 segundos = 2000ms, atualiza a cada 100ms
-      setPressProgress(Math.min(progress, 100));
-
-      if (progress >= 100) {
-        clearInterval(pressTimerRef.current);
-        completeCheckInForDate(new Date());
-        setIsPressed(false);
-      }
-    }, 100);
-  };
-
-  const handleMouseUp = () => {
-    setIsPressed(false);
-    clearInterval(pressTimerRef.current);
-    setPressProgress(0);
-  };
-
-  const handleTouchStart = () => {
-    handleMouseDown();
-  };
-
-  const handleTouchEnd = () => {
-    handleMouseUp();
-  };
-
-  const [showCheckinAnimation, setShowCheckinAnimation] = useState(false);
-
-  const completeCheckInForDate = (date) => {
-    const dateString = toTZDateString(date);
-    const todayDateString = toTZDateString(new Date());
-
-    if (dateString === todayDateString) {
-      // Check-in de hoje
-      if (!checkedInToday) {
-        const newCheckInDates = [...checkInDates, dateString];
-
-        setCheckInDates(newCheckInDates);
-        setLastCheckInDate(dateString);
-        setCheckedInToday(true);
-
-        // Feedback tátil (vibração)
-        if (window.navigator && window.navigator.vibrate) {
-          window.navigator.vibrate(200);
-        }
-
-        // Animação de sucesso
-        setShowCheckinAnimation(true);
-        setTimeout(() => setShowCheckinAnimation(false), 1800);
-
-        // recalcula streak a partir do histórico atualizado
-        const newSet = new Set(newCheckInDates);
-        const newStreak = computeStreakFromSet(newSet);
-        setStreak(newStreak);
-
-        localStorage.setItem('checkInData', JSON.stringify({
-          lastCheckInDate: dateString,
-          checkInDates: newCheckInDates
-        }));
-      }
-    } else {
-      // Check-in de data passada
-      if (!checkInDates.includes(dateString)) {
-        const newCheckInDates = [...checkInDates, dateString];
-        setCheckInDates(newCheckInDates);
-
-        // recalcula streak (pode aumentar se marcar dias consecutivos até ontem)
-        const newSet = new Set(newCheckInDates);
-        const newStreak = computeStreakFromSet(newSet);
-        setStreak(newStreak);
-
-        localStorage.setItem('checkInData', JSON.stringify({
-          lastCheckInDate: lastCheckInDate,
-          checkInDates: newCheckInDates
-        }));
-      }
+    const savedTheme = localStorage.getItem('darkMode');
+    if (savedTheme) {
+      setDarkMode(JSON.parse(savedTheme));
     }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem('darkMode', JSON.stringify(newMode));
+  };
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
   };
 
   const handleDayClick = (day) => {
-    const clickedDate = new Date(currentYear, currentMonth, day, 12, 0, 0);
-    const dateString = toTZDateString(clickedDate);
-    const todayDateString = toTZDateString(new Date());
+    if (!editMode) return;
 
-    // Se é um dia passado
-    if (clickedDate < new Date(todayDateString) || dateString !== todayDateString) {
-      if (!checkInDates.includes(dateString)) {
-        completeCheckInForDate(clickedDate);
+    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    
+    if (checkedDays.includes(dateStr)) {
+      // Remover check-in
+      const newCheckedDays = checkedDays.filter(d => d !== dateStr);
+      setCheckedDays(newCheckedDays);
+      localStorage.setItem('checkedDays', JSON.stringify(newCheckedDays));
+    } else {
+      // Adicionar check-in
+      const newCheckedDays = [...checkedDays, dateStr];
+      setCheckedDays(newCheckedDays);
+      localStorage.setItem('checkedDays', JSON.stringify(newCheckedDays));
+    }
+  };
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const now = new Date();
+      const midnight = new Date();
+      midnight.setHours(23, 59, 59, 999);
+      
+      const diff = midnight - now;
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      setTimeLeft(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Atualizar mês e ano automaticamente todos os dias
+    const updateDate = () => {
+      const now = new Date();
+      setCurrentMonth(now.getMonth());
+      setCurrentYear(now.getFullYear());
+    };
+
+    updateDate();
+    const interval = setInterval(updateDate, 60000); // Verifica a cada minuto
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Atualizar mês e ano automaticamente todos os dias
+    const updateDate = () => {
+      const now = new Date();
+      setCurrentMonth(now.getMonth());
+      setCurrentYear(now.getFullYear());
+    };
+
+    updateDate();
+    const interval = setInterval(updateDate, 60000); // Verifica a cada minuto
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const getDaysInMonth = (month, year) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (month, year) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const isWeekend = (dayIndex) => {
+    return dayIndex === 0 || dayIndex === 6;
+  };
+
+  const isChecked = (day) => {
+    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return checkedDays.includes(dateStr);
+  };
+
+  const handleCheckIn = () => {
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    if (!checkedDays.includes(dateStr)) {
+      const newCheckedDays = [...checkedDays, dateStr];
+      setCheckedDays(newCheckedDays);
+      localStorage.setItem('checkedDays', JSON.stringify(newCheckedDays));
+    }
+  };
+
+  const isTodayChecked = () => {
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    return checkedDays.includes(dateStr);
+  };
+
+  const calculateStreak = () => {
+    if (checkedDays.length === 0) return 0;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let streak = 0;
+    let currentDate = new Date(today);
+
+    // Se hoje foi feito check-in, começa contando de hoje
+    // Se não foi, começa de ontem (ainda pode fazer hoje)
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    if (checkedDays.includes(todayStr)) {
+      // Hoje já foi feito, conta de hoje pra trás
+      while (true) {
+        const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        const dayOfWeek = currentDate.getDay();
+        const isWeekendDay = dayOfWeek === 0 || dayOfWeek === 6;
+        
+        if (checkedDays.includes(dateStr)) {
+          streak++;
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else if (isWeekendDay) {
+          // Fim de semana sem check-in: não quebra a ofensiva
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else {
+          break;
+        }
       }
-    } else if (dateString === todayDateString && !checkedInToday) {
-      // Se é hoje e ainda não fez check-in, mostrar o botão de pressão
-      // O botão de pressão é o principal, então não fazer nada aqui
+    } else {
+      // Hoje ainda não foi feito, verifica de ontem pra trás
+      currentDate.setDate(currentDate.getDate() - 1);
+      
+      while (true) {
+        const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        const dayOfWeek = currentDate.getDay();
+        const isWeekendDay = dayOfWeek === 0 || dayOfWeek === 6;
+        
+        if (checkedDays.includes(dateStr)) {
+          streak++;
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else if (isWeekendDay) {
+          // Fim de semana sem check-in: não quebra a ofensiva
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
     }
+
+    return streak;
   };
 
-  const isDayCheckedIn = (day) => {
-    const dateString = toTZDateString(new Date(currentYear, currentMonth, day, 12, 0, 0));
-    return checkInDates.includes(dateString);
+  const isInActiveStreak = (day) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const checkDate = new Date(currentYear, currentMonth, day);
+    checkDate.setHours(0, 0, 0, 0);
+    
+    // Se é data futura, não está na ofensiva
+    if (checkDate > today) return false;
+    
+    const checkDateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
+    const checkDayOfWeek = checkDate.getDay();
+    const isCheckDateWeekend = checkDayOfWeek === 0 || checkDayOfWeek === 6;
+    
+    // Se não é fim de semana, não precisa destacar
+    if (!isCheckDateWeekend) return false;
+    
+    // Se já fez check-in nesse fim de semana, não precisa destacar
+    if (checkedDays.includes(checkDateStr)) return false;
+    
+    // Verificar se está dentro da ofensiva ativa
+    let currentDate = new Date(today);
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    // Começa de hoje ou ontem dependendo se fez check-in hoje
+    if (!checkedDays.includes(todayStr)) {
+      currentDate.setDate(currentDate.getDate() - 1);
+    }
+    
+    let hasCheckinBefore = false;
+    
+    // Percorrer do ponto inicial até o dia em questão
+    while (currentDate >= checkDate) {
+      const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+      const dayOfWeek = currentDate.getDay();
+      const isWeekendDay = dayOfWeek === 0 || dayOfWeek === 6;
+      
+      if (checkedDays.includes(dateStr)) {
+        hasCheckinBefore = true;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else if (isWeekendDay) {
+        // Fim de semana sem check-in: pode continuar, mas precisa ter check-in antes
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else {
+        // Dia útil sem check-in: quebrou a ofensiva
+        return false;
+      }
+    }
+    
+    // Para estar na ofensiva, precisa ter pelo menos um check-in antes do fim de semana
+    if (!hasCheckinBefore) return false;
+    
+    // Verificar se tem continuidade depois do fim de semana (não quebrou)
+    currentDate = new Date(checkDate);
+    currentDate.setDate(currentDate.getDate() + 1);
+    
+    let foundCheckinAfter = false;
+    
+    // Olhar alguns dias à frente para ver se a ofensiva continuou
+    while (currentDate <= today) {
+      const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+      const dayOfWeek = currentDate.getDay();
+      const isWeekendDay = dayOfWeek === 0 || dayOfWeek === 6;
+      
+      if (checkedDays.includes(dateStr)) {
+        foundCheckinAfter = true;
+        break;
+      } else if (isWeekendDay) {
+        // Outro fim de semana: continuar procurando
+        currentDate.setDate(currentDate.getDate() + 1);
+      } else if (currentDate > today) {
+        // Ainda não chegou esse dia, pode fazer check-in
+        break;
+      } else {
+        // Dia útil passou sem check-in: quebrou
+        return false;
+      }
+    }
+    
+    // Se chegou até hoje sem quebrar, está na ofensiva
+    return true;
   };
 
-  const isConsecutiveCheckedIn = (day) => {
-    const prevDateString = toTZDateString(new Date(currentYear, currentMonth, day - 1, 12, 0, 0));
-    const nextDateString = toTZDateString(new Date(currentYear, currentMonth, day + 1, 12, 0, 0));
+  const renderCalendar = () => {
+    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
+    const days = [];
 
-    const isPrevChecked = checkInDates.includes(prevDateString);
-    const isNextChecked = checkInDates.includes(nextDateString);
+    // Células vazias antes do primeiro dia
+    for (let i = 0; i < firstDay; i++) {
+      days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
+    }
 
-    return { isPrevChecked, isNextChecked };
+    // Dias do mês
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayOfWeek = (firstDay + day - 1) % 7;
+      const isWeekendDay = isWeekend(dayOfWeek);
+      const today = new Date();
+      const isToday = day === today.getDate() && 
+                      currentMonth === today.getMonth() && 
+                      currentYear === today.getFullYear();
+      const checked = isChecked(day);
+
+      days.push(
+        <div 
+          key={day} 
+          className={`calendar-day ${isWeekendDay ? 'weekend' : ''} ${isToday ? 'today' : ''} ${checked ? 'checked' : ''} ${editMode ? 'editable' : ''}`}
+          onClick={() => handleDayClick(day)}
+          style={{ cursor: editMode ? 'pointer' : 'default' }}
+        >
+          {day}
+        </div>
+      );
+    }
+
+    return days;
   };
 
-  const getSequenceLineWidth = () => {
-    if (checkInDates.length === 0) return 0;
-    
-    // Encontrar o último dia checado
-    const lastCheckedDay = Math.max(
-      ...checkInDates.map(date => {
-        const d = new Date(date);
-        return d.getMonth() === currentMonth && d.getFullYear() === currentYear ? d.getDate() : 0;
-      })
-    );
-    
-    if (lastCheckedDay === 0) return 0;
-    
-    // Calcular a percentagem baseada na posição do último dia checado
-    // Cada coluna tem aproximadamente 14.28% de width (100% / 7 colunas)
-    // Mais o gap entre eles
-    const columnWidth = 100 / 7;
-    const gapPercentage = (10 / (60 * 7)) * 100; // 10px gap em 60px de largura estimada
-    const singleDayPercentage = columnWidth + gapPercentage;
-    
-    return lastCheckedDay * singleDayPercentage;
+  const getProgressMilestones = () => {
+    const streak = calculateStreak();
+    const baseValue = Math.floor(streak / 15) * 15;
+    return [baseValue, baseValue + 5, baseValue + 10, baseValue + 15];
   };
 
-  const getDayClass = (day) => {
-    const todayStr = toTZDateString(new Date());
-    const cellDate = new Date(currentYear, currentMonth, day, 12, 0, 0);
-    const cellStr = toTZDateString(cellDate);
-    const isToday = cellStr === todayStr;
-    const isWeekend = isWeekendTZ(cellDate);
-    const isCheckedIn = isDayCheckedIn(day);
-
-    if (isToday && isCheckedIn) {
-      return 'day today-checked';
-    } else if (isCheckedIn) {
-      return 'day checked';
-    }
-    if (isWeekend) {
-      return 'day weekend-unchecked';
-    }
-    if (isToday && !isCheckedIn) {
-      return 'day today-unchecked';
-    }
-    return 'day unchecked';
+  const getProgressPercentage = () => {
+    const streak = calculateStreak();
+    const milestones = getProgressMilestones();
+    const start = milestones[0];
+    const end = milestones[3];
+    const range = end - start;
+    const current = streak - start;
+    return (current / range) * 100;
   };
 
   return (
-    <div className="App">
-      {/* animação de sucesso removida conforme solicitado */}
+    <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <div className="container">
-
-        {/* Dias de ofensiva */}
-        <div className="streak-container">
-          <div className={`streak-display ${streak === 0 ? 'grayscale' : ''}`}>
-            <div className={`streak-content${checkedInToday ? '' : ' grayscale'}`}> 
-              <div className="streak-number">{streak}</div>
-              <div className="streak-label">{streak === 1 ? 'dia de ofensiva!' : 'dias de ofensiva!'}</div>
-            </div>
-            <img src={fireIcon} alt="fire" className={`streak-icon${checkedInToday ? '' : ' grayscale'}`} />
-          </div>
+        <div className="streak-counter">
+          <div className={`streak-number ${isTodayChecked() ? 'active' : 'inactive'}`}>{calculateStreak()}</div>
+          <div className="streak-label">dias de ofensiva</div>
         </div>
 
-        {/* Meta de ofensiva */}
-        <div className="goals-container" style={{ marginTop: 10 }}>
-          <h3>Meta de ofensiva</h3>
-          {(() => {
-            // Base deslizante de 15 em 15: 0,5,10,15 -> quando atingir 15 vira 15,20,25,30 etc.
-            const base = Math.floor(streak / 15) * 15;
-            const goals = [
-              { target: base, label: `${base}` },
-              { target: base + 5, label: `${base + 5}` },
-              { target: base + 10, label: `${base + 10}` },
-              { target: base + 15, label: `${base + 15}` }
-            ];
-
-            // A barra é contínua entre `base` e `base + 15` (atinge 100% ao chegar no último alvo)
-            const raw = streak - base;
-            const progressPercent = Math.max(0, Math.min((raw / 15) * 100, 100));
-
-            return (
-              <div className="goals-bar-wrapper">
-                <div className="goals-bar-container">
-                  <div className="goals-bar">
-                    <div
-                      className="goals-bar-fill"
-                      style={{ width: `${progressPercent}%` }}
-                    ></div>
-                  </div>
-
-                  <div className="goals-markers">
-                    {goals.map((goal, idx) => {
-                      const markerPosition = ((goal.target - base) / 15) * 100;
-                      const completed = streak >= goal.target;
-                      return (
-                        <div
-                          key={idx}
-                          className={`goal-marker ${completed ? 'completed' : ''}`}
-                          style={{ left: `${markerPosition}%` }}
-                        >
-                          <span className="marker-label">{goal.label}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-
-        {/* Mantenha sua ofensiva */}
-        <div className="motivation-box">
-          <img src={fireIcon} alt="fire" className="motivation-icon" />
-          <div className="motivation-text">
-            <strong>Mantenha a sua ofensiva perfeita:</strong> Siga focado(a) todos os dias!
-          </div>
-        </div>
-
-        <div className="calendar" style={{ marginBottom: 0 }}>
-          <div className="calendar-header">
-            <h2>{new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(' de ', ' ')}</h2>
-          </div>
-
-          <div className="calendar-box">
-            <div className="weekday-header">
-              {['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d => (
-                <div key={d} className="weekday-cell">{d}</div>
-              ))}
-            </div>
-
-            {(() => {
-              // gerar semanas do mês (matriz de semanas com 7 colunas)
-              const firstWeekday = new Date(currentYear, currentMonth, 1).getDay();
-              const weeks = [];
-              let week = new Array(7).fill(null);
-              let day = 1;
-
-              // preencher primeira semana
-              for (let i = firstWeekday; i < 7; i++) {
-                week[i] = day;
-                day += 1;
-              }
-              weeks.push(week);
-
-              while (day <= daysInMonth) {
-                week = new Array(7).fill(null);
-                for (let i = 0; i < 7 && day <= daysInMonth; i++) {
-                  week[i] = day;
-                  day += 1;
-                }
-                weeks.push(week);
-              }
-
-              return weeks.map((wk, idx) => {
+        <div className="progress-bar-container">
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${getProgressPercentage()}%` }}></div>
+            <div className="progress-milestones">
+              {getProgressMilestones().map((milestone, index) => {
+                const streak = calculateStreak();
+                const isAchieved = streak >= milestone;
                 return (
-                  <div className="week-row" key={idx}>
-                    <div className="week-grid">
-                      {wk.map((d, i) => {
-                        if (!d) return <div key={i} className="day empty"></div>;
-                        const cls = getDayClass(d);
-                        const { isPrevChecked, isNextChecked } = isConsecutiveCheckedIn(d);
-                        const isToday = d === today.getDate() && today.getMonth() === currentMonth && today.getFullYear() === currentYear;
-                        const pulseClass = isToday ? 'pulse-today' : '';
-                        if (isToday) {
-                          return (
-                            <div
-                              key={i}
-                              className={`${cls} ${isPrevChecked ? 'connected-left' : ''} ${isNextChecked ? 'connected-right' : ''} ${pulseClass}`}
-                              onMouseDown={checkedInToday ? undefined : handleMouseDown}
-                              onMouseUp={checkedInToday ? undefined : handleMouseUp}
-                              onMouseLeave={checkedInToday ? undefined : handleMouseUp}
-                              onTouchStart={checkedInToday ? undefined : handleTouchStart}
-                              onTouchEnd={checkedInToday ? undefined : handleTouchEnd}
-                              style={{ cursor: checkedInToday ? 'default' : 'pointer', position: 'relative' }}
-                            >
-                              {d}
-                              {/* Barra de progresso visual ao pressionar */}
-                              {isPressed && !checkedInToday && (
-                                <div style={{
-                                  position: 'absolute',
-                                  left: 0,
-                                  bottom: 0,
-                                  height: 4,
-                                  width: `${pressProgress}%`,
-                                  background: 'rgba(255, 111, 60, 0.5)',
-                                  borderRadius: 2,
-                                  transition: 'width 0.1s linear',
-                                  zIndex: 2
-                                }} />
-                              )}
-                            </div>
-                          );
-                        } else {
-                          return (
-                            <div
-                              key={i}
-                              className={`${cls} ${isPrevChecked ? 'connected-left' : ''} ${isNextChecked ? 'connected-right' : ''}`}
-                              style={{ cursor: 'default' }}
-                            >
-                              {d}
-                            </div>
-                          );
-                        }
-                      })}
-                    </div>
+                  <div 
+                    key={index} 
+                    className={`milestone ${isAchieved ? 'achieved' : ''}`}
+                    style={{ left: `${(index / 3) * 100}%` }}
+                  >
+                    <div className="milestone-marker"></div>
+                    <div className="milestone-label">{milestone}</div>
                   </div>
                 );
-              });
-            })()}
+              })}
+            </div>
           </div>
         </div>
 
-
-        {/* Barra de arrastar para check-in */}
-        <div style={{ marginTop: 20, marginBottom: 0, display: 'flex', justifyContent: 'center' }}>
-          <DragCheckinBar
-            checkedInToday={checkedInToday}
-            onCheckin={() => completeCheckInForDate(new Date())}
-          />
+        <div className="calendar">
+          <div className="calendar-header">
+            <h2>{monthNames[currentMonth]} {currentYear}</h2>
+            {!isTodayChecked() && <div className="timer">{timeLeft}</div>}
+          </div>
+          
+          <div className="calendar-grid">
+            <div className="weekdays">
+              {weekDays.map((day, index) => (
+                <div 
+                  key={day} 
+                  className={`weekday ${isWeekend(index) ? 'weekend' : ''}`}
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            <div className="days">
+              {renderCalendar()}
+            </div>
+          </div>
         </div>
 
-        {/* Barra de arrastar para resetar tudo */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
-          <DragResetBar
-            onReset={() => {
-              setCheckInDates([]);
-              setLastCheckInDate(null);
-              setCheckedInToday(false);
-              setStreak(0);
-              localStorage.removeItem('checkInData');
-            }}
-          />
+        <div className="buttons-container">
+          <button 
+            className={`checkin-button ${isTodayChecked() ? 'disabled' : ''}`}
+            onClick={handleCheckIn}
+            disabled={isTodayChecked()}
+            title={isTodayChecked() ? 'Check-in feito hoje!' : 'Fazer Check-in'}
+          >
+            <span className="iconify" data-icon="wpf:security-checked"></span>
+          </button>
+
+          <button 
+            className={`edit-button ${editMode ? 'active' : ''}`}
+            onClick={toggleEditMode}
+            title={editMode ? 'Sair do modo edição' : 'Editar check-ins'}
+          >
+            <span className="iconify" data-icon="mingcute:edit-line"></span>
+          </button>
+
+          <button 
+            className="theme-toggle-button" 
+            onClick={toggleDarkMode}
+            title={darkMode ? 'Modo claro' : 'Modo escuro'}
+          >
+            <span className="iconify" data-icon="line-md:light-dark-loop"></span>
+          </button>
         </div>
-
-
-        {/* Mensagem removida conforme solicitado */}
       </div>
     </div>
   );
