@@ -216,6 +216,75 @@ function App() {
     return streak;
   };
 
+  const getStreakStartDate = () => {
+    if (checkedDays.length === 0) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let currentDate = new Date(today);
+
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    let startDate = null;
+
+    if (checkedDays.includes(todayStr)) {
+      // Hoje já foi feito, percorre de hoje pra trás
+      while (true) {
+        const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        const dayOfWeek = currentDate.getDay();
+        const isWeekendDay = dayOfWeek === 0 || dayOfWeek === 6;
+        
+        if (checkedDays.includes(dateStr)) {
+          startDate = new Date(currentDate);
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else if (isWeekendDay) {
+          // Fim de semana sem check-in: não quebra a ofensiva
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+    } else {
+      // Hoje ainda não foi feito, verifica de ontem pra trás
+      currentDate.setDate(currentDate.getDate() - 1);
+      
+      while (true) {
+        const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        const dayOfWeek = currentDate.getDay();
+        const isWeekendDay = dayOfWeek === 0 || dayOfWeek === 6;
+        
+        if (checkedDays.includes(dateStr)) {
+          startDate = new Date(currentDate);
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else if (isWeekendDay) {
+          // Fim de semana sem check-in: não quebra a ofensiva
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+    }
+
+    return startDate;
+  };
+
+  const formatStreakStartDate = () => {
+    const startDate = getStreakStartDate();
+    if (!startDate) return '';
+
+    const fullMonthNames = [
+      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ];
+
+    const day = startDate.getDate();
+    const month = fullMonthNames[startDate.getMonth()];
+    const year = startDate.getFullYear();
+
+    return `${day} de ${month} de ${year}`;
+  };
+
   const isInActiveStreak = (day) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -402,6 +471,14 @@ function App() {
               {renderCalendar()}
             </div>
           </div>
+        </div>
+
+        <div className="motivation-message">
+          {calculateStreak() > 0 ? (
+            <p>Você está em uma ofensiva desde <span className="highlight-date">{formatStreakStartDate()}</span>. Parabéns!</p>
+          ) : (
+            <p>Treine hoje para dar início a uma nova ofensiva. <span className="highlight-focus">Foco!</span></p>
+          )}
         </div>
 
         <div className="buttons-container">
