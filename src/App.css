@@ -20,7 +20,6 @@
   border-radius: 20px;
   max-width: 600px;
   width: 100%;
-  margin-top: 30px;
   position: relative;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -366,7 +365,6 @@ h1 {
 }
 
 .edit-button:hover {
-  border-color: #FF4500;
   transform: translateY(-2px);
 }
 
@@ -387,13 +385,17 @@ h1 {
 }
 
 .App.dark-mode .edit-button:hover {
-  border-color: #FF4500;
+  transform: translateY(-2px);
 }
 
 .App.dark-mode .edit-button.active {
   background: #FF4500;
   color: #ddd;
   border-color: #FF4500;
+}
+
+.App.dark-mode .edit-button.active:hover {
+  background: #FF6347;
 }
 
 /* Botão de Tema */

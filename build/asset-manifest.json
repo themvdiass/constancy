@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/constancy/static/css/main.8cce7f3d.css",
+    "main.js": "/constancy/static/js/main.46b3521d.js",
+    "index.html": "/constancy/index.html",
+    "main.8cce7f3d.css.map": "/constancy/static/css/main.8cce7f3d.css.map",
+    "main.46b3521d.js.map": "/constancy/static/js/main.46b3521d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8cce7f3d.css",
+    "static/js/main.46b3521d.js"
+  ]
+}
