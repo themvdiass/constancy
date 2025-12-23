@@ -454,6 +454,13 @@ h1 {
   border-radius: 5px;
 }
 
+/* Finais de semana não checados: destacar em laranja */
+.day.weekend-unchecked {
+  color: #ff6b3f;
+  border-radius: 5px;
+}
+
+
 /* Dia atual não marcado - laranja (fundo claro e número mais escuro) */
 .day.today-unchecked {
   background-color: #8b8b8b; /* fundo cinza claro igual aos desmarcados */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Icon } from '@iconify/react';
 import './App.css';
 
@@ -65,6 +65,40 @@ function App() {
       return date.getFullYear() === year && date.getMonth() === month;
     }).length;
   };
+  const isWeekendTZ = (d) => {
+    const weekday = new Intl.DateTimeFormat('en-US', { timeZone: TIME_ZONE, weekday: 'short' }).format(d);
+    return weekday === 'Sat' || weekday === 'Sun';
+  };
+  const getActiveStreakSet = (dateSet) => {
+    const set = new Set();
+    const weekendBuffer = [];
+    const oneDay = 24 * 60 * 60 * 1000;
+    const todayStr = toTZDateString(new Date());
+    let curr = dateSet.has(todayStr) ? new Date() : new Date(Date.now() - oneDay);
+    while (true) {
+      const s = toTZDateString(curr);
+      if (dateSet.has(s)) {
+        // flush fins de semana entre dois check-ins
+        if (weekendBuffer.length > 0) {
+          weekendBuffer.forEach(ws => set.add(ws));
+          weekendBuffer.length = 0;
+        }
+        set.add(s);
+        curr = new Date(curr.getTime() - oneDay);
+      } else if (isWeekendTZ(curr)) {
+        // bufferizar fins de semana, só irão para o set quando encontrarmos um check-in anterior
+        weekendBuffer.push(s);
+        curr = new Date(curr.getTime() - oneDay);
+        continue;
+      } else {
+        // dia útil sem check-in: quebra a sequência e descarta buffer de fim de semana
+        break;
+      }
+    }
+    return set;
+  };
+
+  const activeStreakSet = useMemo(() => getActiveStreakSet(new Set(checkInDates)), [checkInDates, checkedInToday]);
   const computeStreakFromSet = (dateSet) => {
     const todayStr = toTZDateString(new Date());
     const oneDay = 24 * 60 * 60 * 1000;
@@ -76,9 +110,15 @@ function App() {
     while (true) {
       const s = toTZDateString(curr);
       if (dateSet.has(s)) {
+        // dia com check-in: conta
         count += 1;
         curr = new Date(curr.getTime() - oneDay);
+      } else if (isWeekendTZ(curr)) {
+        // fim de semana sem check-in: não quebra a sequência, apenas avança
+        curr = new Date(curr.getTime() - oneDay);
+        continue;
       } else {
+        // dia útil sem check-in: quebra a sequência
         break;
       }
     }
@@ -204,7 +244,6 @@ function App() {
   };
 
   const isConsecutiveCheckedIn = (day) => {
-    const dateString = toTZDateString(new Date(currentYear, currentMonth, day, 12, 0, 0));
     const prevDateString = toTZDateString(new Date(currentYear, currentMonth, day - 1, 12, 0, 0));
     const nextDateString = toTZDateString(new Date(currentYear, currentMonth, day + 1, 12, 0, 0));
 
@@ -239,19 +278,24 @@ function App() {
 
   const getDayClass = (day) => {
     const todayStr = toTZDateString(new Date());
-    const cellStr = toTZDateString(new Date(currentYear, currentMonth, day, 12, 0, 0));
+    const cellDate = new Date(currentYear, currentMonth, day, 12, 0, 0);
+    const cellStr = toTZDateString(cellDate);
     const isToday = cellStr === todayStr;
+    const isWeekend = isWeekendTZ(cellDate);
     const isCheckedIn = isDayCheckedIn(day);
 
     if (isToday && isCheckedIn) {
       return 'day today-checked';
-    } else if (isToday && !isCheckedIn) {
-      return 'day today-unchecked';
     } else if (isCheckedIn) {
       return 'day checked';
-    } else {
-      return 'day unchecked';
     }
+    if (isWeekend) {
+      return 'day weekend-unchecked';
+    }
+    if (isToday && !isCheckedIn) {
+      return 'day today-unchecked';
+    }
+    return 'day unchecked';
   };
 
   return (
