@@ -424,7 +424,7 @@ function App() {
       <div className="container">
         <div className="streak-counter">
           <div className={`streak-number ${isTodayChecked() ? 'active' : 'inactive'}`}>{calculateStreak()}</div>
-          <div className="streak-label">dias de ofensiva</div>
+          <div className="streak-label">{calculateStreak() === 1 ? 'dia de ofensiva' : 'dias de ofensiva'}</div>
         </div>
 
         <div className="progress-bar-container">
