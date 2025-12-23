@@ -5,6 +5,7 @@
   justify-content: center;
   background: white;
   padding: 20px;
+  padding-bottom: 100px;
   font-family: 'Montserrat', sans-serif;
   transition: background-color 0.3s ease;
 }
@@ -302,11 +303,24 @@ h1 {
 
 /* Container de Botões */
 .buttons-container {
-  margin-top: 30px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   gap: 10px;
   align-items: stretch;
   justify-content: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.App.dark-mode .buttons-container {
+  background: rgba(45, 45, 45, 0.95);
+  border-top-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Botão de Check-in */
