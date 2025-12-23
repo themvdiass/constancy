@@ -329,7 +329,6 @@ h1 {
 
 .checkin-button:hover:not(.disabled) {
   background: #FF6347;
-  transform: translateY(-2px);
 }
 
 .checkin-button.disabled {
@@ -365,7 +364,7 @@ h1 {
 }
 
 .edit-button:hover {
-  transform: translateY(-2px);
+  /* Sem animação */
 }
 
 .edit-button.active {
@@ -385,7 +384,7 @@ h1 {
 }
 
 .App.dark-mode .edit-button:hover {
-  transform: translateY(-2px);
+  /* Sem animação */
 }
 
 .App.dark-mode .edit-button.active {
@@ -421,7 +420,7 @@ h1 {
 }
 
 .theme-toggle-button:hover {
-  transform: translateY(-2px);
+  /* Sem animação */
 }
 
 .App.dark-mode .theme-toggle-button {

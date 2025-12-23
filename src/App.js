@@ -34,6 +34,29 @@ function App() {
     localStorage.setItem('darkMode', JSON.stringify(newMode));
   };
 
+  useEffect(() => {
+    // Adicionar/remover classe dark-mode do html quando darkMode mudar
+    if (darkMode) {
+      document.documentElement.classList.add('dark-mode');
+      document.body.classList.add('dark-mode');
+      // Atualizar theme-color para mobile
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#2d2d2d');
+    } else {
+      document.documentElement.classList.remove('dark-mode');
+      document.body.classList.remove('dark-mode');
+      // Atualizar theme-color para mobile
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#ffffff');
+    }
+  }, [darkMode]);
+
+  useEffect(() => {
+    // Atualizar theme-color meta tag quando darkMode muda
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', darkMode ? '#2d2d2d' : '#ffffff');
+    }
+  }, [darkMode]);
+
   const toggleEditMode = () => {
     setEditMode(!editMode);
   };
