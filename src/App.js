@@ -7,6 +7,7 @@ import DragCheckinBar from './DragCheckinBar';
 import DragResetBar from './DragResetBar';
 
 function App() {
+  const TIME_ZONE = 'America/Sao_Paulo';
   const [streak, setStreak] = useState(0);
   const [lastCheckInDate, setLastCheckInDate] = useState(null);
   const [checkedInToday, setCheckedInToday] = useState(false);
@@ -26,20 +27,33 @@ function App() {
     const savedData = localStorage.getItem('checkInData');
     if (savedData) {
       const { lastCheckInDate: savedDate, checkInDates: savedDates } = JSON.parse(savedData);
-      const dates = savedDates || [];
+      const normalize = (d) => toTZDateString(new Date(d));
+      const dates = (savedDates || []).map(normalize);
+      const lastDateNorm = savedDate ? normalize(savedDate) : null;
       setCheckInDates(dates);
-      setLastCheckInDate(savedDate || null);
+      setLastCheckInDate(lastDateNorm);
 
       // determinar se já fez check-in hoje e calcular streak baseado no histórico
       const setDates = new Set(dates);
-      const todayString = new Date().toISOString().split('T')[0];
+      const todayString = toTZDateString(new Date());
       setCheckedInToday(setDates.has(todayString));
       setStreak(computeStreakFromSet(setDates));
+
+      // persistir normalização
+      localStorage.setItem('checkInData', JSON.stringify({
+        lastCheckInDate: lastDateNorm,
+        checkInDates: dates
+      }));
     }
   }, []);
 
-  // helper: formata date para YYYY-MM-DD
-  const toISODate = (d) => d.toISOString().split('T')[0];
+  // helper: formata date para YYYY-MM-DD no fuso de Brasília
+  const toTZDateString = (d) => new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(d);
 
   // contar dias de prática no mês atual
   const getDaysOfPracticeThisMonth = () => {
@@ -52,7 +66,7 @@ function App() {
     }).length;
   };
   const computeStreakFromSet = (dateSet) => {
-    const todayStr = toISODate(new Date());
+    const todayStr = toTZDateString(new Date());
     const oneDay = 24 * 60 * 60 * 1000;
 
     // começar em hoje se marcado, senão em ontem
@@ -60,7 +74,7 @@ function App() {
     let count = 0;
 
     while (true) {
-      const s = toISODate(curr);
+      const s = toTZDateString(curr);
       if (dateSet.has(s)) {
         count += 1;
         curr = new Date(curr.getTime() - oneDay);
@@ -74,9 +88,13 @@ function App() {
 
   // Monitorar mudanças de mês
   useEffect(() => {
-    setCurrentMonth(today.getMonth());
-    setCurrentYear(today.getFullYear());
-  }, [today]);
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' });
+    const parts = fmt.format(new Date()).split('-');
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10) - 1;
+    setCurrentMonth(m);
+    setCurrentYear(y);
+  }, []);
 
   const handleMouseDown = () => {
     if (checkedInToday) return;
@@ -114,9 +132,8 @@ function App() {
   const [showCheckinAnimation, setShowCheckinAnimation] = useState(false);
 
   const completeCheckInForDate = (date) => {
-    const dateString = date.toISOString().split('T')[0];
-    const todayDate = new Date();
-    const todayDateString = todayDate.toISOString().split('T')[0];
+    const dateString = toTZDateString(date);
+    const todayDateString = toTZDateString(new Date());
 
     if (dateString === todayDateString) {
       // Check-in de hoje
@@ -124,7 +141,7 @@ function App() {
         const newCheckInDates = [...checkInDates, dateString];
 
         setCheckInDates(newCheckInDates);
-        setLastCheckInDate(date.toISOString());
+        setLastCheckInDate(dateString);
         setCheckedInToday(true);
 
         // Feedback tátil (vibração)
@@ -142,7 +159,7 @@ function App() {
         setStreak(newStreak);
 
         localStorage.setItem('checkInData', JSON.stringify({
-          lastCheckInDate: date.toISOString(),
+          lastCheckInDate: dateString,
           checkInDates: newCheckInDates
         }));
       }
@@ -166,9 +183,9 @@ function App() {
   };
 
   const handleDayClick = (day) => {
-    const clickedDate = new Date(currentYear, currentMonth, day);
-    const dateString = clickedDate.toISOString().split('T')[0];
-    const todayDateString = new Date().toISOString().split('T')[0];
+    const clickedDate = new Date(currentYear, currentMonth, day, 12, 0, 0);
+    const dateString = toTZDateString(clickedDate);
+    const todayDateString = toTZDateString(new Date());
 
     // Se é um dia passado
     if (clickedDate < new Date(todayDateString) || dateString !== todayDateString) {
@@ -182,14 +199,14 @@ function App() {
   };
 
   const isDayCheckedIn = (day) => {
-    const dateString = new Date(currentYear, currentMonth, day).toISOString().split('T')[0];
+    const dateString = toTZDateString(new Date(currentYear, currentMonth, day, 12, 0, 0));
     return checkInDates.includes(dateString);
   };
 
   const isConsecutiveCheckedIn = (day) => {
-    const dateString = new Date(currentYear, currentMonth, day).toISOString().split('T')[0];
-    const prevDateString = new Date(currentYear, currentMonth, day - 1).toISOString().split('T')[0];
-    const nextDateString = new Date(currentYear, currentMonth, day + 1).toISOString().split('T')[0];
+    const dateString = toTZDateString(new Date(currentYear, currentMonth, day, 12, 0, 0));
+    const prevDateString = toTZDateString(new Date(currentYear, currentMonth, day - 1, 12, 0, 0));
+    const nextDateString = toTZDateString(new Date(currentYear, currentMonth, day + 1, 12, 0, 0));
 
     const isPrevChecked = checkInDates.includes(prevDateString);
     const isNextChecked = checkInDates.includes(nextDateString);
@@ -221,7 +238,9 @@ function App() {
   };
 
   const getDayClass = (day) => {
-    const isToday = day === today.getDate() && today.getMonth() === currentMonth && today.getFullYear() === currentYear;
+    const todayStr = toTZDateString(new Date());
+    const cellStr = toTZDateString(new Date(currentYear, currentMonth, day, 12, 0, 0));
+    const isToday = cellStr === todayStr;
     const isCheckedIn = isDayCheckedIn(day);
 
     if (isToday && isCheckedIn) {
