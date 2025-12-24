@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Icon } from '@iconify/react';
 import './App.css';
 
 function App() {
@@ -456,7 +457,7 @@ function App() {
               <div className="timer">{timeLeft}</div>
             ) : (
               <div className="timer completed">
-                <span className="iconify" data-icon="heroicons-solid:lightning-bolt"></span>
+                <Icon icon="heroicons-solid:lightning-bolt" className="icon" />
                 <span className="timer-text">Treino concluído</span>
               </div>
             )}
@@ -495,7 +496,7 @@ function App() {
             disabled={isTodayChecked()}
             title={isTodayChecked() ? 'Check-in feito hoje!' : 'Fazer Check-in'}
           >
-            <span className="iconify" data-icon="carbon:calendar-add"></span>
+            <Icon icon="carbon:calendar-add" className="icon" />
           </button>
 
           <button 
@@ -503,7 +504,7 @@ function App() {
             onClick={toggleEditMode}
             title={editMode ? 'Sair do modo edição' : 'Editar check-ins'}
           >
-            <span className="iconify" data-icon="mingcute:edit-line"></span>
+            <Icon icon="mingcute:edit-line" className="icon" />
           </button>
 
           <button 
@@ -511,7 +512,7 @@ function App() {
             onClick={toggleDarkMode}
             title={darkMode ? 'Modo claro' : 'Modo escuro'}
           >
-            <span className="iconify" data-icon="line-md:light-dark-loop"></span>
+            <Icon icon="line-md:light-dark-loop" className="icon" />
           </button>
         </div>
       </div>

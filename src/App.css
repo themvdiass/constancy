@@ -195,12 +195,17 @@ h1 {
   font-weight: 600;
 }
 
-.timer.completed .iconify {
+.timer.completed .icon {
   font-size: 1rem;
 }
 
 .App.dark-mode .timer.completed {
   color: #FF6B35;
+}
+
+.icon {
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 .calendar-grid {
@@ -420,7 +425,7 @@ h1 {
   flex-shrink: 0;
 }
 
-.edit-button .iconify {
+.edit-button .icon {
   color: inherit;
 }
 
@@ -480,7 +485,7 @@ h1 {
   flex-shrink: 0;
 }
 
-.theme-toggle-button .iconify {
+.theme-toggle-button .icon {
   color: inherit;
 }
 
