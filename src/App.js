@@ -452,7 +452,14 @@ function App() {
         <div className="calendar">
           <div className="calendar-header">
             <h2>{monthNames[currentMonth]} {currentYear}</h2>
-            {!isTodayChecked() && <div className="timer">{timeLeft}</div>}
+            {!isTodayChecked() ? (
+              <div className="timer">{timeLeft}</div>
+            ) : (
+              <div className="timer completed">
+                <span className="iconify" data-icon="heroicons-solid:lightning-bolt"></span>
+                <span className="timer-text">Treino concluído</span>
+              </div>
+            )}
           </div>
           
           <div className="calendar-grid">
