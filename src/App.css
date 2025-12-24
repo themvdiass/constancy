@@ -403,6 +403,12 @@ h1 {
   opacity: 0.7;
 }
 
+.App.dark-mode .checkin-button.disabled {
+  background: #b8b8b836;
+  color: #7c7c7c;
+  opacity: 1;
+}
+
 .checkin-button.disabled:hover {
   transform: none;
 }
