@@ -47,8 +47,16 @@
   color: #999;
 }
 
+.streak-number.blocked {
+  color: #6c63ff;
+}
+
 .App.dark-mode .streak-number.inactive {
   color: #666;
+}
+
+.App.dark-mode .streak-number.blocked {
+  color: #7c73ff;
 }
 
 .streak-label {
@@ -93,7 +101,19 @@
   height: 100%;
   background: linear-gradient(90deg, #FF4500, #FF6347);
   border-radius: 10px;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.progress-fill.blocked {
+  background: linear-gradient(90deg, #6c63ff, #7c73ff);
+}
+
+.progress-fill.inactive {
+  background: linear-gradient(90deg, #999, #aaa);
+}
+
+.App.dark-mode .progress-fill.inactive {
+  background: linear-gradient(90deg, #555, #666);
 }
 
 .progress-milestones {
@@ -124,6 +144,11 @@
   border-color: #FF4500;
 }
 
+.milestone.achieved.blocked .milestone-marker {
+  background: #6c63ff;
+  border-color: #6c63ff;
+}
+
 .milestone-label {
   position: absolute;
   top: 25px;
@@ -135,6 +160,33 @@
   white-space: nowrap;
   background: white;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.milestone.achieved .milestone-label {
+  color: #FF4500;
+  font-weight: 700;
+}
+
+.milestone.achieved.blocked .milestone-label {
+  color: #6c63ff;
+}
+
+.milestone.achieved.inactive .milestone-marker {
+  background: #999;
+  border-color: #999;
+}
+
+.milestone.achieved.inactive .milestone-label {
+  color: #999;
+}
+
+.App.dark-mode .milestone.achieved.inactive .milestone-marker {
+  background: #666;
+  border-color: #666;
+}
+
+.App.dark-mode .milestone.achieved.inactive .milestone-label {
+  color: #666;
 }
 
 .App.dark-mode .milestone-label {
@@ -176,6 +228,39 @@ h1 {
   color: #ddd;
 }
 
+.gem-counter {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #6c63ff;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(108, 99, 255, 0.3);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.gem-counter .icon {
+  font-size: 1.2rem;
+  color: white;
+}
+
+.App.dark-mode .gem-counter {
+  background: #5a52d5;
+  box-shadow: 0 2px 8px rgba(90, 82, 213, 0.4);
+}
+
+.gem-count {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  line-height: 1;
+}
+
 .timer {
   font-size: 0.75rem;
   color: #999;
@@ -199,8 +284,24 @@ h1 {
   font-size: 1rem;
 }
 
+.timer.blocked {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6c63ff;
+  font-weight: 600;
+}
+
+.timer.blocked .icon {
+  font-size: 1rem;
+}
+
 .App.dark-mode .timer.completed {
   color: #FF6B35;
+}
+
+.App.dark-mode .timer.blocked {
+  color: #7c73ff;
 }
 
 .icon {
@@ -297,14 +398,53 @@ h1 {
   border: 2px solid #FF6B35;
 }
 
+.calendar-day.today.blocked {
+  border: none;
+}
+
 .App.dark-mode .calendar-day.today {
   border: 2px solid #FF6B35;
+}
+
+.App.dark-mode .calendar-day.today.blocked {
+  border: none;
 }
 
 .calendar-day.checked {
   background: #FF4500 !important;
   color: white;
   font-weight: 700;
+}
+
+.calendar-day.blocked {
+  background: #6c63ff !important;
+  color: white;
+  font-weight: 700;
+  position: relative;
+}
+
+.calendar-day.future.editable {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+.calendar-day.grayed {
+  background: #999 !important;
+  color: white !important;
+}
+
+.App.dark-mode .calendar-day.grayed {
+  background: #666 !important;
+  color: white !important;
+}
+
+.day-marker {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.7rem;
+  color: white;
+  opacity: 0.9;
 }
 
 .calendar-day.today.checked {
@@ -368,6 +508,12 @@ h1 {
   transition: color 0.3s ease;
 }
 
+.motivation-message .highlight-block {
+  color: #6c63ff;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
 .App.dark-mode .motivation-message {
   background: rgba(60, 60, 60, 0.5);
   border-color: rgba(150, 150, 150, 0.3);
@@ -380,6 +526,10 @@ h1 {
 .App.dark-mode .motivation-message .highlight-date,
 .App.dark-mode .motivation-message .highlight-focus {
   color: #FF6B35;
+}
+
+.App.dark-mode .motivation-message .highlight-block {
+  color: #7c73ff;
 }
 
 /* Container de Botões */
@@ -430,6 +580,48 @@ h1 {
 }
 
 .checkin-button.disabled:hover {
+  transform: none;
+}
+
+/* Botão de Bloqueio */
+.block-button {
+  flex: 1;
+  padding: 15px;
+  font-size: 1.5rem;
+  color: white;
+  background: #6c63ff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  max-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 55px;
+}
+
+.block-button:hover:not(.disabled) {
+  background: #5a52d5;
+}
+
+.block-button:focus {
+  outline: none;
+}
+
+.block-button.disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.App.dark-mode .block-button.disabled {
+  background: #b8b8b836;
+  color: #7c7c7c;
+  opacity: 1;
+}
+
+.block-button.disabled:hover {
   transform: none;
 }
 
