@@ -488,7 +488,7 @@ function App() {
             disabled={isTodayChecked()}
             title={isTodayChecked() ? 'Check-in feito hoje!' : 'Fazer Check-in'}
           >
-            <span className="iconify" data-icon="wpf:security-checked"></span>
+            <span className="iconify" data-icon="carbon:calendar-add"></span>
           </button>
 
           <button 
