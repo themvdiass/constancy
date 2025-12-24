@@ -356,7 +356,7 @@ h1 {
   padding: 15px;
   font-size: 1.5rem;
   color: white;
-  background: #FF6B35;
+  background: #FF4500;
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -369,7 +369,11 @@ h1 {
 }
 
 .checkin-button:hover:not(.disabled) {
-  background: #FF4500;
+  background: #cc3700;
+}
+
+.checkin-button:focus {
+  outline: none;
 }
 
 .checkin-button.disabled {
@@ -406,6 +410,10 @@ h1 {
 
 .edit-button:hover {
   /* Sem animação */
+}
+
+.edit-button:focus {
+  outline: none;
 }
 
 .edit-button.active {
@@ -462,6 +470,10 @@ h1 {
 
 .theme-toggle-button:hover {
   /* Sem animação */
+}
+
+.theme-toggle-button:focus {
+  outline: none;
 }
 
 .App.dark-mode .theme-toggle-button {
