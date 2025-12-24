@@ -423,7 +423,7 @@ h1 {
 }
 
 .edit-button.active:hover {
-  background: #cc3700;
+  /* background: #cc3700; */
 }
 
 .App.dark-mode .edit-button {
@@ -437,13 +437,13 @@ h1 {
 }
 
 .App.dark-mode .edit-button.active {
-  background: #FF6B35;
+  background: #FF4500;
   color: white;
-  border-color: #FF6B35;
+  border-color: #FF4500;
 }
 
 .App.dark-mode .edit-button.active:hover {
-  background: #FF4500;
+  /* background: #FF4500; */
 }
 
 /* Botão de Tema */
