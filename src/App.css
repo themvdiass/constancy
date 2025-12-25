@@ -422,6 +422,19 @@ h1 {
   font-weight: 700;
 }
 
+.calendar-day.old-streak {
+  background: #999 !important;
+  color: white;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+.App.dark-mode .calendar-day.old-streak {
+  background: #666 !important;
+  color: #ccc;
+  opacity: 0.7;
+}
+
 .calendar-day.blocked {
   background: #6c63ff !important;
   color: white;
@@ -454,15 +467,17 @@ h1 {
 }
 
 .calendar-day.today.checked {
-  background: #FF6B35 !important;
+  background: #FF4500 !important;
   border: none;
   color: white;
   font-weight: 700;
 }
 
 .App.dark-mode .calendar-day.today.checked {
-  background: #FF6B35 !important;
+  background: #FF4500 !important;
   border: none;
+  color: white;
+  font-weight: 700;
 }
 
 .calendar-day:active {
@@ -731,13 +746,22 @@ h1 {
   border-color: #FF4500;
 }
 
+.calendar-day.editable {
+  border: 2px dashed transparent;
+  transition: all 0.2s ease;
+}
+
 .calendar-day.editable:hover {
   background: #ffe5d9 !important;
-  transform: scale(1.1);
+  border-color: #FF4500;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.2);
 }
 
 .App.dark-mode .calendar-day.editable:hover {
   background: #4a4a4a !important;
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
 }
 
 /* Responsivo para tablets */

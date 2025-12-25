@@ -363,8 +363,8 @@ function App() {
     
     let startDate = null;
 
-    if (checkedDays.includes(todayStr)) {
-      // Hoje já foi feito, percorre de hoje pra trás
+    if (checkedDays.includes(todayStr) || blockedDays.includes(todayStr)) {
+      // Hoje já foi feito check-in ou bloqueio, percorre de hoje pra trás
       while (true) {
         const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
         const dayOfWeek = currentDate.getDay();
@@ -372,6 +372,9 @@ function App() {
         
         if (checkedDays.includes(dateStr)) {
           startDate = new Date(currentDate);
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else if (blockedDays.includes(dateStr) && !isWeekendDay) {
+          // Bloqueio protege mas não é o início da streak
           currentDate.setDate(currentDate.getDate() - 1);
         } else if (isWeekendDay) {
           // Fim de semana sem check-in: não quebra a ofensiva
@@ -391,6 +394,9 @@ function App() {
         
         if (checkedDays.includes(dateStr)) {
           startDate = new Date(currentDate);
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else if (blockedDays.includes(dateStr) && !isWeekendDay) {
+          // Bloqueio protege mas não é o início da streak
           currentDate.setDate(currentDate.getDate() - 1);
         } else if (isWeekendDay) {
           // Fim de semana sem check-in: não quebra a ofensiva
@@ -418,6 +424,17 @@ function App() {
     const year = startDate.getFullYear();
 
     return `${day} de ${month} de ${year}`;
+  };
+
+  const isInCurrentStreak = (day) => {
+    // Verifica se um dia checked faz parte da streak atual
+    const startDate = getStreakStartDate();
+    if (!startDate) return false;
+    
+    const dayDate = new Date(currentYear, currentMonth, day);
+    dayDate.setHours(0, 0, 0, 0);
+    
+    return dayDate >= startDate;
   };
 
   const isInActiveStreak = (day) => {
@@ -523,6 +540,8 @@ function App() {
                       currentYear === today.getFullYear();
       const checked = isChecked(day);
       const blocked = isBlocked(day);
+      const isInStreak = checked && isInCurrentStreak(day);
+      const isOldStreak = checked && !isInStreak;
       
       // Verificar se é dia futuro
       const todayDate = new Date();
@@ -538,7 +557,7 @@ function App() {
       days.push(
         <div 
           key={day} 
-          className={`calendar-day ${isWeekendDay ? 'weekend' : ''} ${isToday ? 'today' : ''} ${checked ? 'checked' : ''} ${blocked ? 'blocked' : ''} ${editMode ? 'editable' : ''} ${isFuture ? 'future' : ''} ${todayIncomplete && isPast && (checked || blocked) ? 'grayed' : ''}`}
+          className={`calendar-day ${isWeekendDay ? 'weekend' : ''} ${isToday ? 'today' : ''} ${isInStreak ? 'checked' : ''} ${isOldStreak ? 'old-streak' : ''} ${blocked ? 'blocked' : ''} ${editMode ? 'editable' : ''} ${isFuture ? 'future' : ''} ${todayIncomplete && isPast && (checked || blocked) ? 'grayed' : ''}`}
           onClick={() => handleDayClick(day)}
           style={{ cursor: editMode && !isFuture ? 'pointer' : 'default' }}
         >
