@@ -656,7 +656,7 @@ h1 {
   font-size: 1.5rem;
   color: #666;
   background: white;
-  border: 2px solid #e0e0e0;
+  border: 2px solid rgba(200, 200, 200, 0.3);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -693,7 +693,7 @@ h1 {
 .App.dark-mode .edit-button {
   background: #3a3a3a;
   color: white;
-  border-color: #555;
+  border: 2px solid rgba(150, 150, 150, 0.3);
 }
 
 .App.dark-mode .edit-button:hover {
@@ -716,7 +716,7 @@ h1 {
   font-size: 1.5rem;
   color: #666;
   background: white;
-  border: 2px solid #e0e0e0;
+  border: 2px solid rgba(200, 200, 200, 0.3);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -743,7 +743,7 @@ h1 {
 .App.dark-mode .theme-toggle-button {
   background: #3a3a3a;
   color: white;
-  border-color: #555;
+  border: 2px solid rgba(150, 150, 150, 0.3);
 }
 
 .App.dark-mode .theme-toggle-button:hover {
