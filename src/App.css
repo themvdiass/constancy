@@ -401,7 +401,7 @@ h1 {
 }
 
 .calendar-day.today {
-  border: 2px solid #FF6B35;
+  border: 2px solid #FF4500;
 }
 
 .calendar-day.today.blocked {
@@ -409,7 +409,7 @@ h1 {
 }
 
 .App.dark-mode .calendar-day.today {
-  border: 2px solid #FF6B35;
+  border: 2px solid #FF4500;
 }
 
 .App.dark-mode .calendar-day.today.blocked {

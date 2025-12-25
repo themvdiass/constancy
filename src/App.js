@@ -596,7 +596,7 @@ function App() {
       days.push(
         <div 
           key={day} 
-          className={`calendar-day ${isWeekendDay ? 'weekend' : ''} ${isToday ? 'today' : ''} ${isInStreak ? 'checked' : ''} ${isOldStreak ? 'old-streak' : ''} ${blocked ? 'blocked' : ''} ${editMode ? 'editable' : ''} ${isFuture ? 'future' : ''} ${todayIncomplete && isPast && (checked || blocked) ? 'grayed' : ''}`}
+          className={`calendar-day ${isWeekendDay ? 'weekend' : ''} ${isToday ? 'today' : ''} ${isInStreak ? 'checked' : ''} ${isOldStreak ? 'old-streak' : ''} ${blocked ? 'blocked' : ''} ${editMode ? 'editable' : ''} ${isFuture ? 'future' : ''}`}
           onClick={() => handleDayClick(day)}
           style={{ cursor: editMode && !isFuture ? 'pointer' : 'default' }}
         >
