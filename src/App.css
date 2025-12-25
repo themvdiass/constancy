@@ -746,24 +746,6 @@ h1 {
   border-color: #FF4500;
 }
 
-.calendar-day.editable {
-  border: 2px dashed transparent;
-  transition: all 0.2s ease;
-}
-
-.calendar-day.editable:hover {
-  background: #ffe5d9 !important;
-  border-color: #FF4500;
-  transform: scale(1.05);
-  box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.2);
-}
-
-.App.dark-mode .calendar-day.editable:hover {
-  background: #4a4a4a !important;
-  border-color: #FF6B35;
-  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
-}
-
 /* Responsivo para tablets */
 @media (max-width: 768px) {
   .container {
