@@ -13,6 +13,7 @@ function App() {
   const [editMode, setEditMode] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [shakeGems, setShakeGems] = useState(false);
 
   const monthNames = [
     'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
@@ -250,6 +251,28 @@ function App() {
     const newBlockedDays = [...blockedDays, dateStr];
     setBlockedDays(newBlockedDays);
     localStorage.setItem('blockedDays', JSON.stringify(newBlockedDays));
+  };
+
+  const handleBlockButtonClick = () => {
+    // Se não tem gemas, anima a caixa de gemas
+    if (gems <= 0) {
+      setShakeGems(true);
+      setTimeout(() => setShakeGems(false), 600);
+      return;
+    }
+    
+    // Verifica se já está bloqueado ou checked hoje
+    if (isTodayBlocked() || isTodayChecked()) {
+      return;
+    }
+    
+    // Não permite usar bloqueio se a ofensiva for 0
+    if (calculateStreak() === 0) {
+      return;
+    }
+    
+    // Se tem gemas e não está bloqueado/checked, tenta usar o bloqueio
+    handleUseBlock();
   };
 
   const isTodayChecked = () => {
@@ -635,7 +658,7 @@ function App() {
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <div className="container">
         <div className="header-top">
-          <div className="gem-counter">
+          <div className={`gem-counter ${shakeGems ? 'shake' : ''}`}>
             <Icon icon="ri:diamond-fill" className="icon" />
             <span className="gem-count">{gems}</span>
           </div>
@@ -732,9 +755,8 @@ function App() {
           </button>
 
           <button 
-            className={`block-button ${isTodayBlocked() || gems <= 0 || isTodayChecked() ? 'disabled' : ''}`}
-            onClick={handleUseBlock}
-            disabled={isTodayBlocked() || gems <= 0 || isTodayChecked()}
+            className={`block-button ${isTodayBlocked() || gems <= 0 || isTodayChecked() || calculateStreak() === 0 ? 'disabled' : ''}`}
+            onClick={handleBlockButtonClick}
             title={
               isTodayBlocked() 
                 ? 'Bloqueio já usado hoje!' 
@@ -742,7 +764,9 @@ function App() {
                   ? 'Sem bloqueios disponíveis' 
                   : isTodayChecked()
                     ? 'Check-in já feito hoje'
-                    : 'Usar bloqueio'
+                    : calculateStreak() === 0
+                      ? 'Sem ofensiva ativa para proteger'
+                      : 'Usar bloqueio'
             }
           >
             <Icon icon="ri:diamond-fill" className="icon" />
