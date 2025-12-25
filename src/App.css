@@ -245,6 +245,7 @@ h1 {
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(108, 99, 255, 0.3);
   z-index: 1000;
+  margin-bottom: 30px;
   transition: all 0.3s ease;
 }
 
