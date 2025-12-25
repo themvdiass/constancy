@@ -569,9 +569,11 @@ function App() {
   return (
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <div className="container">
-        <div className="gem-counter">
-          <Icon icon="ri:diamond-fill" className="icon" />
-          <span className="gem-count">{gems}</span>
+        <div className="header-top">
+          <div className="gem-counter">
+            <Icon icon="ri:diamond-fill" className="icon" />
+            <span className="gem-count">{gems}</span>
+          </div>
         </div>
         
         <div className="streak-counter">

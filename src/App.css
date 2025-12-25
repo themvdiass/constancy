@@ -28,6 +28,12 @@
   background: #2d2d2d;
 }
 
+/* Header Top */
+.header-top {
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* Contador de Ofensiva */
 .streak-counter {
   margin-bottom: 20px;
@@ -230,9 +236,6 @@ h1 {
 }
 
 .gem-counter {
-  position: fixed;
-  top: 20px;
-  right: 20px;
   display: flex;
   align-items: center;
   gap: 6px;
