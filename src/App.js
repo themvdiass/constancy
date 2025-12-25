@@ -203,6 +203,13 @@ function App() {
     return new Date(year, month, 1).getDay();
   };
 
+  const hasCalendarSixRows = () => {
+    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
+    const totalCells = firstDay + daysInMonth;
+    return totalCells > 35; // Mais de 35 células significa 6 linhas
+  };
+
   const isWeekend = (dayIndex) => {
     return dayIndex === 0 || dayIndex === 6;
   };
@@ -714,7 +721,7 @@ function App() {
           )}
         </div>
 
-        <div className="buttons-container">
+        <div className={`buttons-container ${hasCalendarSixRows() ? 'six-rows' : ''}`}>
           <button 
             className={`checkin-button ${isTodayChecked() || isTodayBlocked() ? 'disabled' : ''}`}
             onClick={handleCheckIn}
