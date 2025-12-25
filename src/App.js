@@ -11,6 +11,8 @@ function App() {
   const [timeLeft, setTimeLeft] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
   const monthNames = [
     'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
@@ -72,6 +74,43 @@ function App() {
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    
+    if (isLeftSwipe) {
+      // Próximo mês
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(currentYear + 1);
+      } else {
+        setCurrentMonth(currentMonth + 1);
+      }
+    }
+    
+    if (isRightSwipe) {
+      // Mês anterior
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(currentYear - 1);
+      } else {
+        setCurrentMonth(currentMonth - 1);
+      }
+    }
   };
 
   const handleDayClick = (day) => {
@@ -640,7 +679,12 @@ function App() {
             )}
           </div>
           
-          <div className="calendar-grid">
+          <div 
+            className="calendar-grid"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div className="weekdays">
               {weekDays.map((day, index) => (
                 <div 
