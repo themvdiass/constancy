@@ -556,6 +556,7 @@ h1 {
 /* Container de Botões */
 .buttons-container {
   margin-top: 30px;
+  margin-bottom: 20px;
   display: flex;
   gap: 10px;
   align-items: stretch;
