@@ -1,7 +1,7 @@
 .App {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background: white;
   padding: 20px;
@@ -32,6 +32,7 @@
 .header-top {
   display: flex;
   justify-content: flex-end;
+  padding-top: 10px;
 }
 
 /* Contador de Ofensiva */
