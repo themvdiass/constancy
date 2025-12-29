@@ -243,6 +243,7 @@
   z-index: 1000;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding: 30px 0;
 }
 
 .modal-content {
@@ -251,9 +252,10 @@
   border-radius: 15px;
   max-width: 400px;
   width: 90%;
-  max-height: 90vh;
+  max-height: calc(100vh - 60px);
   overflow-y: auto;
   transition: background-color 0.3s ease;
+  margin: auto;
 }
 
 .modal-edit {
