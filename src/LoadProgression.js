@@ -81,6 +81,10 @@ function LoadProgression({ darkMode }) {
       const newExercises = [...exercises, newExercise];
       setExercises(newExercises);
       localStorage.setItem('exercises', JSON.stringify(newExercises));
+      
+      // Selecionar automaticamente o novo exercício no gráfico
+      setSelectedChartExercise(newExercise.id);
+      
       setExerciseName('');
       setWeight('');
       setSection('');
@@ -362,7 +366,11 @@ function LoadProgression({ darkMode }) {
                 }}>
                   Cancelar
                 </button>
-                <button className="confirm-button" onClick={handleAddExercise}>
+                <button 
+                  className="confirm-button" 
+                  onClick={handleAddExercise}
+                  disabled={!exerciseName.trim() || !weight.trim() || !section.trim()}
+                >
                   Adicionar
                 </button>
               </div>
@@ -430,21 +438,33 @@ function LoadProgression({ darkMode }) {
               <div className="history-section">
                 <label>Histórico de cargas</label>
                 <div className="history-list">
-                  {selectedExercise.history.map((entry, index) => (
-                    <div key={index} className="history-item">
-                      <div className="history-info">
-                        <span className="history-weight">{entry.weight} kg</span>
-                        <span className="history-date">{formatDate(entry.date)}</span>
+                  {selectedExercise.history.map((entry, index) => {
+                    const previousWeight = index > 0 ? selectedExercise.history[index - 1].weight : null;
+                    const difference = previousWeight !== null ? entry.weight - previousWeight : null;
+                    
+                    return (
+                      <div key={index} className="history-item">
+                        <div className="history-info">
+                          <div>
+                            <span className="history-weight">{entry.weight} kg</span>
+                            {difference !== null && difference !== 0 && (
+                              <span className={`history-difference ${difference > 0 ? 'positive' : 'negative'}`}>
+                                {' '}({difference > 0 ? '+' : ''}{difference.toFixed(1)} kg)
+                              </span>
+                            )}
+                          </div>
+                          <span className="history-date">{formatDate(entry.date)}</span>
+                        </div>
+                        <button 
+                          className="delete-history-button"
+                          onClick={() => handleDeleteWeight(selectedExercise.id, index)}
+                          title="Remover esta carga"
+                        >
+                          <Icon icon="mdi:close" />
+                        </button>
                       </div>
-                      <button 
-                        className="delete-history-button"
-                        onClick={() => handleDeleteWeight(selectedExercise.id, index)}
-                        title="Remover esta carga"
-                      >
-                        <Icon icon="mdi:close" />
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -572,29 +592,6 @@ function LoadProgression({ darkMode }) {
                       stroke={darkMode ? '#aaa' : '#666'}
                       style={{ fontSize: '0.85rem', fontFamily: 'Montserrat, sans-serif' }}
                       axisLine={{ stroke: darkMode ? '#555' : '#e0e0e0' }}
-                    />
-                    <Tooltip 
-                      position={{ y: 0 }}
-                      cursor={false}
-                      contentStyle={{
-                        backgroundColor: darkMode ? '#3a3a3a' : 'white',
-                        border: `1px solid ${darkMode ? '#555' : '#e0e0e0'}`,
-                        borderRadius: '10px',
-                        color: darkMode ? '#ddd' : '#333',
-                        fontFamily: 'Montserrat, sans-serif',
-                        padding: '12px',
-                        boxShadow: darkMode ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)'
-                      }}
-                      labelStyle={{ 
-                        color: darkMode ? '#ddd' : '#333', 
-                        fontWeight: 600,
-                        marginBottom: '4px',
-                        fontFamily: 'Montserrat, sans-serif'
-                      }}
-                      itemStyle={{
-                        color: '#FF4500',
-                        fontWeight: 600
-                      }}
                     />
                     <Line 
                       type="monotone" 
