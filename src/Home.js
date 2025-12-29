@@ -142,12 +142,17 @@ function Home({ darkMode }) {
     
     while (true) {
       const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+      const dayOfWeek = currentDate.getDay(); // 0 = domingo, 6 = sábado
       
       const hasCheck = checkedDays.includes(dateStr);
       const hasBlock = blockedDays.includes(dateStr);
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
       
       if (hasCheck || hasBlock) {
         streak++;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else if (isWeekend) {
+        // Finais de semana sem check-in não quebram a streak, apenas pula
         currentDate.setDate(currentDate.getDate() - 1);
       } else {
         break;
@@ -174,11 +179,16 @@ function Home({ darkMode }) {
     
     while (true) {
       const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
+      const dayOfWeek = streakStart.getDay(); // 0 = domingo, 6 = sábado
       
       const hasCheck = checkedDays.includes(dateStr);
       const hasBlock = blockedDays.includes(dateStr);
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
       
       if (hasCheck || hasBlock) {
+        streakStart.setDate(streakStart.getDate() - 1);
+      } else if (isWeekend) {
+        // Finais de semana sem check-in não quebram a streak, apenas pula
         streakStart.setDate(streakStart.getDate() - 1);
       } else {
         streakStart.setDate(streakStart.getDate() + 1);
