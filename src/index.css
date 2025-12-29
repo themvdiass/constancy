@@ -7,23 +7,23 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: white;
+  background: white !important;
   transition: background-color 0.3s ease;
 }
 
 html.dark-mode, body.dark-mode {
-  background: #2d2d2d;
+  background: #2d2d2d !important;
   transition: background-color 0.3s ease;
 }
 
 html.modal-open, body.modal-open {
-  background: #808080;
-  transition: none;
+  background: #808080 !important;
+  transition: none !important;
 }
 
 html.dark-mode.modal-open, body.dark-mode.modal-open {
-  background: #1a1a1a;
-  transition: none;
+  background: #1a1a1a !important;
+  transition: none !important;
 }
 
 body::before {
