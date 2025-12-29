@@ -49,6 +49,19 @@ function LoadProgression({ darkMode }) {
     }
   }, []);
 
+  // Controlar overlay no body quando modais estiverem abertos
+  useEffect(() => {
+    if (showModal || showEditModal || showChartModal) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [showModal, showEditModal, showChartModal]);
+
   const handleAddExercise = () => {
     if (exerciseName.trim() && weight.trim() && section.trim()) {
       const newExercise = {
