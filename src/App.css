@@ -92,7 +92,7 @@
 }
 
 .App.dark-mode .progress-bar-container {
-  background: #3a3a3a;
+  background: #2d2d2d;
   border: 2px solid rgba(150, 150, 150, 0.3);
 }
 
@@ -202,7 +202,7 @@
 }
 
 .App.dark-mode .milestone-label {
-  background: #3a3a3a;
+  background: #2d2d2d;
   color: #aaa;
 }
 
@@ -307,7 +307,7 @@ h1 {
 }
 
 .App.dark-mode .timer.completed {
-  color: #FF6B35;
+  color: #FF4500;
 }
 
 .App.dark-mode .timer.blocked {
@@ -351,7 +351,7 @@ h1 {
 }
 
 .weekday.weekend {
-  color: #ff6b35;
+  color: #ff4500;
 }
 
 .days {
@@ -385,7 +385,7 @@ h1 {
 }
 
 .App.dark-mode .calendar-day.weekend {
-  color: #ff6b35;
+  color: #ff4500;
 }
 
 .App.dark-mode .calendar-day.weekend.checked {
@@ -550,7 +550,7 @@ h1 {
 
 .App.dark-mode .motivation-message .highlight-date,
 .App.dark-mode .motivation-message .highlight-focus {
-  color: #FF6B35;
+  color: #FF4500;
 }
 
 .App.dark-mode .motivation-message .highlight-block {
@@ -770,14 +770,11 @@ h1 {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  position: relative;
 }
 
 .navigation-button .icon {
   color: inherit;
-}
-
-.navigation-button:hover {
-  border-color: #FF4500;
 }
 
 .navigation-button:focus {
@@ -790,8 +787,19 @@ h1 {
   border: 2px solid rgba(150, 150, 150, 0.3);
 }
 
-.App.dark-mode .navigation-button:hover {
-  border-color: #FF4500;
+.new-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #FF4500;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsivo para tablets */
@@ -948,5 +956,5 @@ h1 {
 }
 
 .App.dark-mode .load-progression-section h2 {
-  color: #FF6B35;
+  color: #FF4500;
 }

@@ -248,6 +248,13 @@ function LoadProgression({ darkMode }) {
           Adicionar exercício
         </button>
 
+        {exercises.length === 0 && (
+          <div className="empty-state" onClick={() => setShowModal(true)}>
+            <Icon icon="pajamas:todo-add" className="empty-icon" />
+            <span>Adicione um exercício para começar</span>
+          </div>
+        )}
+
         {exercises.length > 0 && (
           <div className="exercises-list">
             {Object.entries(groupExercisesBySection()).map(([sectionName, sectionExercises]) => (
