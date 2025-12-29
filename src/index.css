@@ -15,6 +15,14 @@ html.dark-mode, body.dark-mode {
   background: #2d2d2d;
 }
 
+html.modal-open, body.modal-open {
+  background: #808080;
+}
+
+html.dark-mode.modal-open, body.dark-mode.modal-open {
+  background: #1a1a1a;
+}
+
 body.modal-open {
   overflow: hidden;
   position: fixed;
@@ -24,11 +32,13 @@ body.modal-open {
 
 body.modal-open::before {
   content: '';
-  position: absolute;
-  top: -5000px;
+  position: fixed;
+  top: 0;
   left: 0;
-  width: 100%;
-  height: 15000px;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
   pointer-events: none;
