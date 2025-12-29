@@ -1,0 +1,654 @@
+.load-progression-container {
+  padding: 20px 20px 40px 20px;
+  background: white;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.App.dark-mode .load-progression-container {
+  background: #2d2d2d;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #999;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.back-link:hover {
+  color: #666;
+}
+
+.back-link:focus {
+  outline: none;
+}
+
+.back-icon {
+  font-size: 1rem;
+}
+
+.App.dark-mode .back-link {
+  color: #aaa;
+}
+
+.App.dark-mode .back-link:hover {
+  color: #ddd;
+}
+
+.page-title {
+  font-size: 1.7em;
+  color: #444;
+  font-weight: 700;
+  text-align: left;
+  margin: 0 0 5px 0;
+  transition: color 0.3s ease;
+}
+
+.App.dark-mode .page-title {
+  color: #ddd;
+}
+
+.add-exercise-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: #FF4500;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+  margin-bottom: 30px;
+  text-align: left;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.add-exercise-button:hover {
+  color: #cc3700;
+}
+
+.add-exercise-button:focus {
+  outline: none;
+}
+
+.add-icon {
+  font-size: 1.2rem;
+}
+
+.App.dark-mode .add-exercise-button {
+  color: #FF6B35;
+}
+
+.App.dark-mode .add-exercise-button:hover {
+  color: #FF8C61;
+}
+
+/* Listagem de exercícios */
+.exercises-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #c0c0c0;
+  margin: 0;
+}
+
+.App.dark-mode .section-title {
+  color: #c0c0c0;
+}
+
+.exercise-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.exercise-item:hover {
+  background: #ebebeb;
+}
+
+.App.dark-mode .exercise-item {
+  background: #3a3a3a;
+}
+
+.App.dark-mode .exercise-item:hover {
+  background: #444;
+}
+
+.exercise-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.exercise-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.App.dark-mode .exercise-name {
+  color: #ddd;
+}
+
+.exercise-weight {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.App.dark-mode .exercise-weight {
+  color: #aaa;
+}
+
+.delete-button {
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: none;
+}
+
+.delete-button:active,
+.delete-button:focus {
+  outline: none;
+  color: #999;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 400px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transition: background-color 0.3s ease;
+}
+
+.modal-edit {
+  max-width: 500px;
+}
+
+.App.dark-mode .modal-content {
+  background: #3a3a3a;
+}
+
+.modal-content h2 {
+  margin: 0 0 20px 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.App.dark-mode .modal-content h2 {
+  color: #ddd;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.App.dark-mode .form-group label {
+  color: #aaa;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background: white;
+  color: #333;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #FF4500;
+}
+
+.App.dark-mode .form-group input {
+  background: #2d2d2d;
+  border-color: #555;
+  color: #ddd;
+}
+
+.App.dark-mode .form-group input:focus {
+  border-color: #FF6B35;
+}
+
+.section-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.section-tags::-webkit-scrollbar {
+  height: 4px;
+}
+
+.section-tags::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.section-tags::-webkit-scrollbar-thumb {
+  background: #FF4500;
+  border-radius: 2px;
+}
+
+.section-tag {
+  padding: 0;
+  background: transparent;
+  color: #FF4500;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.section-tag:hover {
+  opacity: 0.7;
+}
+
+.section-tag:focus {
+  outline: none;
+}
+
+.App.dark-mode .section-tag {
+  color: #FF6B35;
+}
+
+.App.dark-mode .section-tag:hover {
+  opacity: 0.7;
+}
+
+.weight-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.weight-input-container input {
+  padding-right: 50px;
+}
+
+.weight-unit {
+  position: absolute;
+  right: 12px;
+  color: #999;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.App.dark-mode .weight-unit {
+  color: #666;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.cancel-button,
+.confirm-button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-button {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.cancel-button:hover {
+  background: #d0d0d0;
+}
+
+.App.dark-mode .cancel-button {
+  background: #555;
+  color: #ddd;
+}
+
+.App.dark-mode .cancel-button:hover {
+  background: #666;
+}
+
+.confirm-button {
+  background: #FF4500;
+  color: white;
+}
+
+.confirm-button:hover {
+  background: #cc3700;
+}
+
+.App.dark-mode .confirm-button {
+  background: #FF6B35;
+}
+
+.App.dark-mode .confirm-button:hover {
+  background: #FF8C61;
+}
+
+/* Histórico de cargas */
+.history-section {
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+.history-section label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.App.dark-mode .history-section label {
+  color: #aaa;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.App.dark-mode .history-item {
+  background: #2d2d2d;
+}
+
+.history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-weight {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.App.dark-mode .history-weight {
+  color: #ddd;
+}
+
+.history-date {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.App.dark-mode .history-date {
+  color: #666;
+}
+
+.delete-history-button {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: none;
+}
+
+.delete-history-button:active,
+.delete-history-button:focus {
+  outline: none;
+  color: #ccc;
+}
+
+/* Seção do gráfico */
+.chart-section {
+  margin-top: 50px;
+  margin-bottom: 40px;
+  padding-top: 30px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.App.dark-mode .chart-section {
+  border-top-color: #444;
+}
+
+.chart-title {
+  font-size: 1.3em;
+  color: #444;
+  font-weight: 700;
+  text-align: left;
+  margin: 0 0 20px 0;
+}
+
+.App.dark-mode .chart-title {
+  color: #ddd;
+}
+
+.exercise-selector {
+  margin-bottom: 25px;
+}
+
+.exercise-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.App.dark-mode .exercise-selector label {
+  color: #aaa;
+}
+
+.chart-exercise-button {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chart-exercise-button:hover {
+  border-color: #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.chart-exercise-button:focus {
+  outline: none;
+  border-color: #FF4500;
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.1);
+}
+
+.App.dark-mode .chart-exercise-button {
+  background: #2d2d2d;
+  border-color: #555;
+  color: #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.App.dark-mode .chart-exercise-button:hover {
+  border-color: #666;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.App.dark-mode .chart-exercise-button:focus {
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+}
+
+.chart-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.chart-section-button {
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  background: white;
+  color: #333;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.chart-section-button:hover {
+  border-color: #FF4500;
+  color: #FF4500;
+}
+
+.chart-section-button.selected {
+  background: #FF4500;
+  border-color: #FF4500;
+  color: white;
+}
+
+.chart-section-button:focus {
+  outline: none;
+}
+
+.App.dark-mode .chart-section-button {
+  background: #2d2d2d;
+  border-color: #555;
+  color: #ddd;
+}
+
+.App.dark-mode .chart-section-button:hover {
+  border-color: #FF6B35;
+  color: #FF6B35;
+}
+
+.App.dark-mode .chart-section-button.selected {
+  background: #FF6B35;
+  border-color: #FF6B35;
+  color: white;
+}
+
+.confirm-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.confirm-button:disabled:hover {
+  background: #FF4500;
+}
+
+.App.dark-mode .confirm-button:disabled:hover {
+  background: #FF6B35;
+}
+
+.chart-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(245, 245, 245, 0.3);
+  border-radius: 15px;
+  border: 1px solid #f0f0f0;
+}
+
+.chart-container * {
+  outline: none !important;
+}
+
+.chart-container svg {
+  outline: none !important;
+}
+
+.App.dark-mode .chart-container {
+  background: rgba(58, 58, 58, 0.3);
+  border-color: #444;
+}

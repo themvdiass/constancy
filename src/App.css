@@ -20,8 +20,12 @@
   border-radius: 20px;
   max-width: 600px;
   width: 100%;
+  height: 785px;
   position: relative;
   transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .App.dark-mode .container {
@@ -750,6 +754,46 @@ h1 {
   border-color: #FF4500;
 }
 
+/* Botão de Navegação */
+.navigation-button {
+  padding: 15px;
+  font-size: 1.5rem;
+  color: #666;
+  background: white;
+  border: 2px solid rgba(200, 200, 200, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.navigation-button .icon {
+  color: inherit;
+}
+
+.navigation-button:hover {
+  border-color: #FF4500;
+}
+
+.navigation-button:focus {
+  outline: none;
+}
+
+.App.dark-mode .navigation-button {
+  background: #3a3a3a;
+  color: white;
+  border: 2px solid rgba(150, 150, 150, 0.3);
+}
+
+.App.dark-mode .navigation-button:hover {
+  border-color: #FF4500;
+}
+
 /* Responsivo para tablets */
 @media (max-width: 768px) {
   .container {
@@ -878,4 +922,31 @@ h1 {
 
 .gem-counter.shake {
   animation: shake 0.6s ease-in-out;
+}
+
+/* Seção de Progressão de Carga */
+.load-progression-section {
+  padding: 0;
+  background: white;
+  transition: background-color 0.3s ease;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.App.dark-mode .load-progression-section {
+  background: #2d2d2d;
+}
+
+.load-progression-section h2 {
+  font-size: 1.2em;
+  color: #FF4500;
+  font-weight: 700;
+  text-align: left;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.App.dark-mode .load-progression-section h2 {
+  color: #FF6B35;
 }
