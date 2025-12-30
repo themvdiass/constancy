@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import './LoadProgression.css';
-
-function LoadProgression({ darkMode }) {
+import AddExerciseScreen from './AddExerciseScreen';
+function LoadProgression({ darkMode, addMode }) {
   const [exercises, setExercises] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentView, setCurrentView] = useState('list'); // 'list' ou 'edit'
@@ -14,9 +15,17 @@ function LoadProgression({ darkMode }) {
   const [section, setSection] = useState('');
   const [selectedSection, setSelectedSection] = useState(null);
   const [showChartModal, setShowChartModal] = useState(false);
-  const [tempChartSection, setTempChartSection] = useState(null);
-  const [tempChartExercise, setTempChartExercise] = useState(null);
-  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const navigate = useNavigate();
+  // Função para adicionar exercício
+  const handleAddExerciseScreen = (newExercise) => {
+    const newExercises = [...exercises, newExercise];
+    setExercises(newExercises);
+    localStorage.setItem('exercises', JSON.stringify(newExercises));
+  };
+
+    const [tempChartSection, setTempChartSection] = useState(null);
+    const [tempChartExercise, setTempChartExercise] = useState(null);
+    const [hoveredPoint, setHoveredPoint] = useState(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('exercises');
@@ -325,11 +334,16 @@ function LoadProgression({ darkMode }) {
   return (
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <div className="load-progression-container">
-        {currentView === 'list' && (
+        {addMode ? (
+          <AddExerciseScreen
+            onAddExercise={handleAddExerciseScreen}
+            sections={getUniqueSections()}
+          />
+        ) : currentView === 'list' && (
           <>
             <h1 className="page-title">Exercícios</h1>
         
-        <button className="add-exercise-button" onClick={() => setShowModal(true)}>
+        <button className="add-exercise-button" onClick={() => navigate('/adicionar-exercicio')}>
           <Icon icon="pajamas:todo-add" className="add-icon" />
           Adicionar exercício
         </button>
@@ -370,79 +384,6 @@ function LoadProgression({ darkMode }) {
           </div>
         )}
 
-        {showModal && (
-          <div className="modal-overlay" onClick={() => setShowModal(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h2>Adicionar exercício</h2>
-              
-              <div className="form-group">
-                <label>Nome do exercício</label>
-                <input
-                  type="text"
-                  value={exerciseName}
-                  onChange={(e) => setExerciseName(e.target.value)}
-                  placeholder="Ex: Supino reto"
-                  autoFocus
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Seção/Categoria</label>
-                <input
-                  type="text"
-                  value={section}
-                  onChange={(e) => handleSectionChange(e.target.value)}
-                  placeholder="Ex: Peito, Pernas, Costas..."
-                />
-                {getUniqueSections().length > 0 && getFilteredSections().length > 0 && (
-                  <div className="section-tags">
-                    {getFilteredSections().map((sec, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        className="section-tag"
-                        onClick={() => handleSectionClick(sec)}
-                      >
-                        {sec}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label>Peso inicial</label>
-                <div className="weight-input-container">
-                  <input
-                    type="number"
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                    placeholder="0"
-                    step="0.5"
-                    min="0"
-                  />
-                  <span className="weight-unit">kg</span>
-                </div>
-              </div>
-
-              <div className="modal-buttons">
-                <button className="cancel-button" onClick={() => {
-                  setShowModal(false);
-                  setSelectedSection(null);
-                }}>
-                  Cancelar
-                </button>
-                <button 
-                  className="confirm-button" 
-                  onClick={handleAddExercise}
-                  disabled={!exerciseName.trim() || !weight.trim() || !section.trim()}
-                >
-                  Adicionar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
           </>
         )}
 

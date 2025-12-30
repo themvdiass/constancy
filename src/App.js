@@ -50,6 +50,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home darkMode={darkMode} />} />
         <Route path="/progressao-de-carga" element={<LoadProgression darkMode={darkMode} />} />
+        <Route path="/adicionar-exercicio" element={<LoadProgression darkMode={darkMode} addMode={true} />} />
       </Routes>
     </Router>
   );
