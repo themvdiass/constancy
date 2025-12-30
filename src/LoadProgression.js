@@ -574,7 +574,7 @@ function LoadProgression({ darkMode }) {
             {getChartData().length > 0 && (
               <div className="chart-container">
                 <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={getChartData()} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
+                  <LineChart data={[{ date: '', peso: 0 }, ...getChartData()]} margin={{ top: 10, right: 5, left: -30, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorPeso" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#FF4500" stopOpacity={0.1}/>
@@ -592,6 +592,37 @@ function LoadProgression({ darkMode }) {
                       stroke={darkMode ? '#aaa' : '#666'}
                       style={{ fontSize: '0.85rem', fontFamily: 'Montserrat, sans-serif' }}
                       axisLine={{ stroke: darkMode ? '#555' : '#e0e0e0' }}
+                    />
+                    <Tooltip 
+                      cursor={false}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length > 0) {
+                          const data = payload[0].payload;
+                          // Não mostrar tooltip para o ponto inicial (0,0)
+                          if (data.date === '' || data.peso === 0) return null;
+                          
+                          return (
+                            <div style={{
+                              backgroundColor: darkMode ? '#3a3a3a' : 'white',
+                              border: `1px solid ${darkMode ? '#555' : '#e0e0e0'}`,
+                              borderRadius: '8px',
+                              color: darkMode ? '#ddd' : '#333',
+                              fontFamily: 'Montserrat, sans-serif',
+                              padding: '8px 10px',
+                              fontSize: '0.8rem',
+                              boxShadow: darkMode ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)'
+                            }}>
+                              <div style={{ color: darkMode ? '#ddd' : '#333', fontWeight: 600, marginBottom: '2px' }}>
+                                {data.date}
+                              </div>
+                              <div style={{ color: '#FF4500', fontWeight: 600 }}>
+                                {data.peso} kg
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
                     />
                     <Line 
                       type="monotone" 
