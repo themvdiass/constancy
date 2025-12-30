@@ -244,6 +244,7 @@ function LoadProgression({ darkMode }) {
   const handleConfirmChartSelection = () => {
     if (tempChartExercise) {
       setSelectedChartExercise(tempChartExercise);
+      setHoveredPoint(null);
       setShowChartModal(false);
       setTempChartSection(null);
       setTempChartExercise(null);

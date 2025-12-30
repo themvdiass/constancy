@@ -167,10 +167,17 @@
   border-radius: 10px;
   transition: background-color 0.3s ease;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .exercise-item:hover {
   background: #e8e8e8;
+}
+
+.exercise-item:active,
+.exercise-item:focus {
+  background: #f5f5f5;
+  outline: none;
 }
 
 .App.dark-mode .exercise-item {
@@ -179,6 +186,12 @@
 
 .App.dark-mode .exercise-item:hover {
   background: #444;
+}
+
+.App.dark-mode .exercise-item:active,
+.App.dark-mode .exercise-item:focus {
+  background: #3a3a3a;
+  outline: none;
 }
 
 .exercise-info {
@@ -753,7 +766,7 @@
 }
 
 .chart-info-weight {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #FF4500;
   font-weight: 700;
 }
