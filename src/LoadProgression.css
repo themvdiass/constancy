@@ -257,16 +257,22 @@
   background: white;
   padding: 30px;
   border-radius: 15px;
-  max-width: 400px;
+  max-width: 380px;
   width: 90%;
-  max-height: calc(100vh - 20px);
+  max-height: 70vh;
   overflow-y: auto;
   transition: background-color 0.3s ease;
   margin: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none;
 }
 
 .modal-edit {
-  max-width: 500px;
+  max-width: 460px;
 }
 
 .App.dark-mode .modal-content {

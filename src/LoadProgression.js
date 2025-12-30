@@ -464,13 +464,10 @@ function LoadProgression({ darkMode }) {
                   )}
                   <ResponsiveContainer width="100%" height={200}>
                     <LineChart 
-                      data={[
-                        { date: '', peso: 0 },
-                        ...selectedExercise.history.map(entry => ({
-                          date: formatDate(entry.date),
-                          peso: entry.weight
-                        }))
-                      ]} 
+                      data={selectedExercise.history.map(entry => ({
+                        date: formatDate(entry.date),
+                        peso: entry.weight
+                      }))} 
                       margin={{ top: 10, right: 20, left: -30, bottom: 0 }}
                     >
                       <defs>
