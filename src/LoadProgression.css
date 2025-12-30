@@ -334,6 +334,14 @@
   overflow: hidden;
 }
 
+html.modal-open, body.modal-open {
+  position: fixed !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
 .modal-content {
   padding-top: env(safe-area-inset-top, 0px);
   background: white;
