@@ -17,6 +17,7 @@ function LoadProgression({ darkMode }) {
   const [tempChartSection, setTempChartSection] = useState(null);
   const [tempChartExercise, setTempChartExercise] = useState(null);
   const [hoveredPoint, setHoveredPoint] = useState(null);
+  const [expandedSections, setExpandedSections] = useState({});
 
   useEffect(() => {
     const saved = localStorage.getItem('exercises');
@@ -219,6 +220,23 @@ function LoadProgression({ darkMode }) {
     return grouped;
   };
 
+  const toggleSection = (sectionName) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionName]: !prev[sectionName]
+    }));
+  };
+
+  // Inicializar todas as seções como expandidas
+  useEffect(() => {
+    const sections = Object.keys(groupExercisesBySection());
+    const initialExpanded = {};
+    sections.forEach(section => {
+      initialExpanded[section] = true;
+    });
+    setExpandedSections(initialExpanded);
+  }, [exercises]);
+
   const getFilteredSections = () => {
     const allSections = getUniqueSections();
     if (!section.trim()) return allSections;
@@ -281,8 +299,15 @@ function LoadProgression({ darkMode }) {
           <div className="exercises-list">
             {Object.entries(groupExercisesBySection()).map(([sectionName, sectionExercises]) => (
               <div key={sectionName} className="section-group">
-                <h3 className="section-title">{sectionName}</h3>
-                {sectionExercises.map((exercise) => (
+                <div className="section-header" onClick={() => toggleSection(sectionName)}>
+                  <h3 className="section-title">{sectionName}</h3>
+                  <Icon 
+                    icon={expandedSections[sectionName] ? "mdi:chevron-up" : "mdi:chevron-down"} 
+                    className="section-toggle-icon"
+                  />
+                </div>
+                <div className={`section-content ${expandedSections[sectionName] ? 'expanded' : 'collapsed'}`}>
+                  {sectionExercises.map((exercise) => (
                   <div 
                     key={exercise.id} 
                     className="exercise-item"
@@ -301,6 +326,7 @@ function LoadProgression({ darkMode }) {
                     </button>
                   </div>
                 ))}
+                </div>
               </div>
             ))}
           </div>
