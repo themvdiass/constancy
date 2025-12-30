@@ -16,9 +16,45 @@ html.dark-mode, body.dark-mode {
   transition: background-color 0.3s ease;
 }
 
-/* Removido background das classes modal-open do html/body para evitar overlay global */
+html.modal-open, body.modal-open {
+  background: #808080 !important;
+  transition: none !important;
+}
 
-/* Overlay global removido. O overlay deve ser aplicado apenas no modal. */
+html.dark-mode.modal-open, body.dark-mode.modal-open {
+  background: #1a1a1a !important;
+  transition: none !important;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+}
+
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+body.modal-open::before {
+  opacity: 1;
+}
+
+html.modal-open {
+  overflow: hidden;
+}
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

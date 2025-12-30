@@ -328,10 +328,7 @@
   min-height: 100dvh;
   /* Garante que o modal vá até o limite da tela, inclusive sob a barra de status */
   max-height: none;
-  background: rgba(0, 0, 0, 0.5); /* Overlay escuro translúcido */
-  /* Garante que o overlay cubra áreas de safe-area em devices notch */
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
