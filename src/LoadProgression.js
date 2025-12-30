@@ -349,7 +349,7 @@ function LoadProgression({ darkMode, addMode }) {
         </button>
 
         {exercises.length === 0 && (
-          <div className="empty-state" onClick={() => setShowModal(true)}>
+          <div className="empty-state" onClick={() => navigate('/adicionar-exercicio')}>
             <Icon icon="pajamas:todo-add" className="empty-icon" />
             <span>Adicione um exercício para começar</span>
           </div>
