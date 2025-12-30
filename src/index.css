@@ -17,12 +17,12 @@ html.dark-mode, body.dark-mode {
 }
 
 html.modal-open, body.modal-open {
-  background: #808080 !important;
+  background: #80808000 !important;
   transition: none !important;
 }
 
 html.dark-mode.modal-open, body.dark-mode.modal-open {
-  background: #1a1a1a !important;
+  background: #1a1a1a00 !important;
   transition: none !important;
 }
 
