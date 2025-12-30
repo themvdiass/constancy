@@ -66,6 +66,27 @@ function LoadProgression({ darkMode }) {
     };
   }, [showModal, showChartModal]);
 
+  // Gerenciar histórico do navegador para botão voltar
+  useEffect(() => {
+    const handlePopState = (e) => {
+      if (currentView === 'edit') {
+        e.preventDefault();
+        handleBackToList();
+      }
+    };
+
+    if (currentView === 'edit') {
+      // Adicionar entrada no histórico quando entrar na tela de edição
+      window.history.pushState({ view: 'edit' }, '');
+    }
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [currentView]);
+
   const handleAddExercise = () => {
     if (exerciseName.trim() && weight.trim() && section.trim()) {
       const newExercise = {
@@ -306,6 +327,11 @@ function LoadProgression({ darkMode }) {
     setWeight('');
     setSection('');
     setSelectedSection(null);
+    
+    // Remover a entrada do histórico se foi adicionada
+    if (window.history.state && window.history.state.view === 'edit') {
+      window.history.back();
+    }
   };
 
   return (
