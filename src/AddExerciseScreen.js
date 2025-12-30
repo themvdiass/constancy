@@ -41,13 +41,13 @@ function AddExerciseScreen({ onAddExercise, sections }) {
   };
 
   return (
-    <div className="edit-screen">
+    <div className="edit-screen" style={{ minHeight: '100vh', height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div className="edit-header">
         <h2 className={!exerciseName.trim() ? 'placeholder' : ''}>
           {exerciseName.trim() ? exerciseName : 'Novo exercício'}
         </h2>
       </div>
-      <div className="edit-content">
+      <div className="edit-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
         <div className="form-group">
           <label>Nome do exercício</label>
           <input
@@ -96,18 +96,18 @@ function AddExerciseScreen({ onAddExercise, sections }) {
             <span className="weight-unit">kg</span>
           </div>
         </div>
-        <div className="modal-buttons">
-          <button className="cancel-button" onClick={handleCancel}>
-            Cancelar
-          </button>
-          <button
-            className="confirm-button"
-            onClick={handleAdd}
-            disabled={!exerciseName.trim() || !weight.trim() || !section.trim()}
-          >
-            Adicionar
-          </button>
-        </div>
+      </div>
+      <div className="modal-buttons" style={{ position: 'static', marginTop: 'auto' }}>
+        <button className="cancel-button" onClick={handleCancel}>
+          Cancelar
+        </button>
+        <button
+          className="confirm-button"
+          onClick={handleAdd}
+          disabled={!exerciseName.trim() || !weight.trim() || !section.trim()}
+        >
+          Adicionar
+        </button>
       </div>
     </div>
   );

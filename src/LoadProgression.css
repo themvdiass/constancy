@@ -577,12 +577,6 @@
   display: flex;
   gap: 10px;
   margin-top: 25px;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: inherit;
-  z-index: 2;
 }
 
 .cancel-button,
