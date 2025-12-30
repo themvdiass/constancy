@@ -19,6 +19,12 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.edit-screen::-webkit-scrollbar {
+  display: none;
 }
 
 .edit-header {
