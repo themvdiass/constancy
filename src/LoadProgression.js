@@ -6,7 +6,7 @@ import './LoadProgression.css';
 function LoadProgression({ darkMode }) {
   const [exercises, setExercises] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentView, setCurrentView] = useState('list'); // 'list' ou 'edit'
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [selectedChartExercise, setSelectedChartExercise] = useState(null);
   const [exerciseName, setExerciseName] = useState('');
@@ -52,7 +52,7 @@ function LoadProgression({ darkMode }) {
 
   // Controlar overlay no body quando modais estiverem abertos
   useEffect(() => {
-    if (showModal || showEditModal || showChartModal) {
+    if (showModal || showChartModal) {
       document.body.classList.add('modal-open');
       document.documentElement.classList.add('modal-open');
     } else {
@@ -64,7 +64,7 @@ function LoadProgression({ darkMode }) {
       document.body.classList.remove('modal-open');
       document.documentElement.classList.remove('modal-open');
     };
-  }, [showModal, showEditModal, showChartModal]);
+  }, [showModal, showChartModal]);
 
   const handleAddExercise = () => {
     if (exerciseName.trim() && weight.trim() && section.trim()) {
@@ -118,7 +118,45 @@ function LoadProgression({ darkMode }) {
       setHoveredPoint(null);
     }
     
-    setShowEditModal(true);
+    setCurrentView('edit');
+  };
+
+  const handleAddWeight = () => {
+    if (!selectedExercise || !weight.trim()) return;
+    
+    const updatedExercises = exercises.map(ex => {
+      if (ex.id === selectedExercise.id) {
+        return {
+          ...ex,
+          history: [
+            ...ex.history,
+            {
+              date: new Date().toISOString(),
+              weight: parseFloat(weight)
+            }
+          ]
+        };
+      }
+      return ex;
+    });
+    
+    setExercises(updatedExercises);
+    localStorage.setItem('exercises', JSON.stringify(updatedExercises));
+    
+    // Atualizar o exercício selecionado com o novo histórico
+    const updatedSelected = updatedExercises.find(ex => ex.id === selectedExercise.id);
+    if (updatedSelected) {
+      setSelectedExercise(updatedSelected);
+      
+      // Atualizar hoveredPoint com o novo valor adicionado
+      const lastEntry = updatedSelected.history[updatedSelected.history.length - 1];
+      setHoveredPoint({
+        date: formatDate(lastEntry.date),
+        peso: lastEntry.weight
+      });
+    }
+    
+    setWeight('');
   };
 
   const handleUpdateExercise = () => {
@@ -138,17 +176,6 @@ function LoadProgression({ darkMode }) {
           updates.section = section.trim();
         }
         
-        // Adicionar novo peso se foi informado
-        if (weight.trim()) {
-          updates.history = [
-            ...ex.history,
-            {
-              date: new Date().toISOString(),
-              weight: parseFloat(weight)
-            }
-          ];
-        }
-        
         return updates;
       }
       return ex;
@@ -164,7 +191,7 @@ function LoadProgression({ darkMode }) {
     setSection('');
     setSelectedSection(null);
     setSelectedExercise(null);
-    setShowEditModal(false);
+    setCurrentView('list');
   };
 
   const handleDeleteWeight = (exerciseId, weightIndex) => {
@@ -272,10 +299,21 @@ function LoadProgression({ darkMode }) {
     return exercise ? exercise.name : 'Selecionar exercício';
   };
 
+  const handleBackToList = () => {
+    setCurrentView('list');
+    setSelectedExercise(null);
+    setExerciseName('');
+    setWeight('');
+    setSection('');
+    setSelectedSection(null);
+  };
+
   return (
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <div className="load-progression-container">
-        <h1 className="page-title">Exercícios</h1>
+        {currentView === 'list' && (
+          <>
+            <h1 className="page-title">Exercícios</h1>
         
         <button className="add-exercise-button" onClick={() => setShowModal(true)}>
           <Icon icon="pajamas:todo-add" className="add-icon" />
@@ -391,14 +429,18 @@ function LoadProgression({ darkMode }) {
             </div>
           </div>
         )}
+          </>
+        )}
 
-        {showEditModal && selectedExercise && (
-          <div className="modal-overlay" onClick={() => {
-            setShowEditModal(false);
-            setSelectedSection(null);
-          }}>
-            <div className="modal-content modal-edit" onClick={(e) => e.stopPropagation()}>
-              <h2>{exerciseName || '\u00A0'}</h2>
+        {currentView === 'edit' && selectedExercise && (
+          <div className="edit-screen">
+            <div className="edit-header">
+              <h2 className={!exerciseName ? 'placeholder' : ''}>
+                {exerciseName || selectedExercise.name}
+              </h2>
+            </div>
+            
+            <div className="edit-content">
               
               <div className="form-group">
                 <label>Nome do exercício</label>
@@ -451,9 +493,17 @@ function LoadProgression({ darkMode }) {
                   />
                   <span className="weight-unit">kg</span>
                 </div>
+                <button 
+                  className="add-weight-button"
+                  onClick={handleAddWeight}
+                  disabled={!weight.trim()}
+                >
+                  <Icon icon="fluent:flash-add-20-filled" />
+                  Adicionar carga
+                </button>
               </div>
 
-              {selectedExercise.history.length > 1 && (
+              {selectedExercise.history.length >= 1 && (
                 <div className="chart-section-modal">
                   <label>Progressão de carga</label>
                   {hoveredPoint && hoveredPoint.date && (
@@ -464,10 +514,13 @@ function LoadProgression({ darkMode }) {
                   )}
                   <ResponsiveContainer width="100%" height={200}>
                     <LineChart 
-                      data={selectedExercise.history.map(entry => ({
-                        date: formatDate(entry.date),
-                        peso: entry.weight
-                      }))} 
+                      data={[
+                        { date: '', peso: 0 },
+                        ...selectedExercise.history.map(entry => ({
+                          date: formatDate(entry.date),
+                          peso: entry.weight
+                        }))
+                      ]} 
                       margin={{ top: 10, right: 20, left: -30, bottom: 0 }}
                     >
                       <defs>
@@ -555,14 +608,7 @@ function LoadProgression({ darkMode }) {
               </div>
 
               <div className="modal-buttons">
-                <button className="cancel-button" onClick={() => {
-                  setShowEditModal(false);
-                  setSelectedExercise(null);
-                  setExerciseName('');
-                  setWeight('');
-                  setSection('');
-                  setSelectedSection(null);
-                }}>
+                <button className="cancel-button" onClick={handleBackToList}>
                   Cancelar
                 </button>
                 <button 

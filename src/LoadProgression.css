@@ -13,6 +13,80 @@
   background: #2d2d2d;
 }
 
+/* Edit Screen Styles */
+.edit-screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.App.dark-mode .edit-header {
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 1.5rem;
+  transition: color 0.2s ease;
+  padding: 0;
+}
+
+.back-button:hover {
+  color: #333;
+}
+
+.back-button:active {
+  transform: scale(0.95);
+}
+
+.App.dark-mode .back-button {
+  color: #aaa;
+}
+
+.App.dark-mode .back-button:hover {
+  color: #fff;
+}
+
+.edit-header h2 {
+  flex: 1;
+  text-align: left;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  transition: opacity 0.2s ease;
+}
+
+.edit-header h2.placeholder {
+  opacity: 0.4;
+}
+
+.App.dark-mode .edit-header h2 {
+  color: #fff;
+}
+
+.edit-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-bottom: 40px;
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -302,7 +376,7 @@
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .form-group label {
@@ -372,6 +446,7 @@
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  margin-left: 12px;
 }
 
 .section-tags:not(:empty) {
@@ -419,6 +494,50 @@
 
 .add-weight-label {
   color: #FF4500;
+}
+
+.add-weight-button {
+  width: 100%;
+  padding: 12px 20px;
+  background: #FF4500;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.add-weight-button:hover {
+  background: #E03E00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+}
+
+.add-weight-button:active {
+  transform: translateY(0);
+}
+
+.add-weight-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.App.dark-mode .add-weight-button:disabled {
+  background: #555;
+}
+
+.add-weight-button svg {
+  font-size: 1.2rem;
 }
 
 .weight-input-container {
@@ -817,6 +936,7 @@
 }
 
 .chart-section-modal {
+  margin-top: 10px;
   margin-bottom: 20px;
 }
 
