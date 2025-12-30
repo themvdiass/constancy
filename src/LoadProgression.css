@@ -735,14 +735,19 @@
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
   font-family: 'Montserrat', sans-serif;
   -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
-.chart-section-button:hover {
-  border-color: #FF4500;
-  color: #FF4500;
+.chart-section-button:hover,
+.chart-section-button:focus,
+.chart-section-button:active,
+.chart-section-button:visited {
+  border-color: #e0e0e0;
+  color: #333;
+  background: white;
+  outline: none;
 }
 
 .chart-section-button.selected {
@@ -751,47 +756,26 @@
   color: white;
 }
 
-.chart-section-button:focus {
-  outline: none;
-}
-
-.chart-section-button:active:not(.selected) {
-  border-color: #e0e0e0;
-  color: #333;
-  background: white;
-}
-
-.chart-section-button:visited {
-  color: #333;
-  background: white;
-}
-
 .App.dark-mode .chart-section-button {
   background: #2d2d2d;
   border-color: #555;
   color: #ddd;
 }
 
-.App.dark-mode .chart-section-button:hover {
-  border-color: #FF4500;
-  color: #FF4500;
+.App.dark-mode .chart-section-button:hover,
+.App.dark-mode .chart-section-button:focus,
+.App.dark-mode .chart-section-button:active,
+.App.dark-mode .chart-section-button:visited {
+  border-color: #555;
+  color: #ddd;
+  background: #2d2d2d;
+  outline: none;
 }
 
 .App.dark-mode .chart-section-button.selected {
   background: #FF4500;
   border-color: #FF4500;
   color: white;
-}
-
-.App.dark-mode .chart-section-button:active:not(.selected) {
-  border-color: #555;
-  color: #ddd;
-  background: #2d2d2d;
-}
-
-.App.dark-mode .chart-section-button:visited {
-  color: #ddd;
-  background: #2d2d2d;
 }
 
 .confirm-button:disabled {
