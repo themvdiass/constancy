@@ -335,7 +335,7 @@
   z-index: 1000;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 10px 0;
+  /* padding: 10px 0; */
 }
 
 .modal-content {
