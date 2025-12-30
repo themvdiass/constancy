@@ -291,8 +291,8 @@ function Home({ darkMode }) {
       const newBlockedDays = [...blockedDays, dateStr];
       setBlockedDays(newBlockedDays);
       localStorage.setItem('blockedDays', JSON.stringify(newBlockedDays));
-    } else if (gems === 0 || calculateStreak() === 0) {
-      // Animação de shake quando não há gemas disponíveis ou streak é 0
+    } else if (gems === 0) {
+      // Animação de shake apenas quando não há gemas disponíveis
       setShakeGems(true);
       setTimeout(() => setShakeGems(false), 600);
     }
