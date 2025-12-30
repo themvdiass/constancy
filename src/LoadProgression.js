@@ -106,6 +106,18 @@ function LoadProgression({ darkMode }) {
     setExerciseName(exercise.name);
     setSection(exercise.section || '');
     setWeight('');
+    
+    // Definir hoveredPoint com o último valor do histórico
+    if (exercise.history && exercise.history.length > 0) {
+      const lastEntry = exercise.history[exercise.history.length - 1];
+      setHoveredPoint({
+        date: formatDate(lastEntry.date),
+        peso: lastEntry.weight
+      });
+    } else {
+      setHoveredPoint(null);
+    }
+    
     setShowEditModal(true);
   };
 
@@ -330,7 +342,7 @@ function LoadProgression({ darkMode }) {
                   onChange={(e) => handleSectionChange(e.target.value)}
                   placeholder="Ex: Peito, Pernas, Costas..."
                 />
-                {getUniqueSections().length > 0 && (
+                {getUniqueSections().length > 0 && getFilteredSections().length > 0 && (
                   <div className="section-tags">
                     {getFilteredSections().map((sec, index) => (
                       <button
@@ -426,7 +438,7 @@ function LoadProgression({ darkMode }) {
               <div className="form-group">
                 <label className="add-weight-label">
                   <Icon icon="fluent:flash-add-20-filled" style={{ marginRight: '6px', fontSize: '1.1rem', verticalAlign: 'middle', color: '#FF4500' }} />
-                  Adicionar nova carga
+                  Nova carga
                 </label>
                 <div className="weight-input-container">
                   <input

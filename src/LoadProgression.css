@@ -275,7 +275,7 @@
 
 .modal-content h2 {
   margin: 0 0 20px 0;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   color: #333;
 }
 
@@ -324,7 +324,7 @@
   padding: 12px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 16px;
   transition: border-color 0.3s ease;
   background: white;
   color: #333;
@@ -365,8 +365,11 @@
 .section-tags {
   display: flex;
   gap: 8px;
-  margin-top: 10px;
   overflow-x: auto;
+}
+
+.section-tags:not(:empty) {
+  margin-top: 10px;
   padding-bottom: 5px;
 }
 
@@ -831,10 +834,38 @@
 
 .chart-container * {
   outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none;
+  -webkit-user-select: none;
+  border: none !important;
 }
 
-.chart-container svg {
+.chart-container svg,
+.chart-container svg *,
+.chart-container circle,
+.chart-container path,
+.chart-container g {
   outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  border: none !important;
+}
+
+.chart-section-modal * {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none;
+  -webkit-user-select: none;
+  border: none !important;
+}
+
+.chart-section-modal svg,
+.chart-section-modal svg *,
+.chart-section-modal circle,
+.chart-section-modal path,
+.chart-section-modal g {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  border: none !important;
 }
 
 .App.dark-mode .chart-container {
