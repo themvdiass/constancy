@@ -323,8 +323,9 @@
   right: 0;
   bottom: 0;
   width: 100vw;
-  height: 100vh;
-  /* min-height: 100vh; */
+  height: 100dvh;
+  min-height: 100dvh;
+  /* Garante que o modal vá até o limite da tela, inclusive sob a barra de status */
   max-height: none;
   background: transparent;
   display: flex;
