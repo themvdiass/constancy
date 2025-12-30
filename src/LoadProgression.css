@@ -7,6 +7,7 @@
   height: calc(var(--vh, 1vh) * 100);
   position: relative;
   transition: background-color 0.3s ease, color 0.3s ease;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .App.dark-mode .load-progression-container {
