@@ -329,28 +329,25 @@
   /* Garante que o modal vá até o limite da tela, inclusive sob a barra de status */
   max-height: none;
   background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   z-index: 1000;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  /* padding: 10px 0; */
+  overflow: hidden;
 }
 
 .modal-content {
-    padding-top: env(safe-area-inset-top, 0px);
+  padding-top: env(safe-area-inset-top, 0px);
   background: white;
-  padding: 30px;
+  /* padding: 24px 18px 38px 18px; */
   border-radius: 15px;
   max-width: 380px;
+  min-width: unset;
   width: 90%;
-  max-height: 70vh;
-  overflow-y: auto;
+  min-height: 180px;
+  /* max-height: 260px; */
+  box-sizing: border-box;
+  margin: 18px auto 0 auto;
+  overflow: visible;
   transition: background-color 0.3s ease;
-  margin: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 .modal-content::-webkit-scrollbar {
@@ -359,10 +356,20 @@
 
 .modal-edit {
   max-width: 460px;
+  min-width: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 32px auto 0 auto;
+  padding: 24px 18px 18px 18px;
+  box-sizing: border-box;
+  min-height: 220px;
+  height: auto;
 }
 
-.App.dark-mode .modal-content {
-  background: #2d2d2d;
+  .App.dark-mode .modal-content {
+    background: #2d2d2d;
 }
 
 .modal-content h2 {
@@ -577,8 +584,8 @@
 .modal-buttons {
   display: flex;
   gap: 10px;
-  margin-top: 32px;
-  margin-bottom: 30px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   justify-content: flex-end;
 }
 
@@ -591,7 +598,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: none;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -624,7 +631,7 @@
 }
 
 .confirm-button:hover:not(:disabled) {
-  background: #cc3700;
+  background: #FF4500;
 }
 
 .confirm-button:disabled {
@@ -654,7 +661,7 @@
 }
 
 .App.dark-mode .confirm-button:hover:not(:disabled) {
-  background: #cc3700;
+  background: #FF4500;
 }
 
 .App.dark-mode .confirm-button:disabled {
