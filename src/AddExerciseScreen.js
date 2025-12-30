@@ -40,18 +40,33 @@ function AddExerciseScreen({ onAddExercise, sections, onCancel }) {
     }
   };
 
-  const handleCancel = () => {
+  const handleClose = () => {
     if (onCancel) {
       onCancel();
     }
   };
 
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    } else {
+      handleClose();
+    }
+  };
+
   return (
-    <div className="edit-screen" style={{ maxWidth: 340, minWidth: 280, width: '100%', minHeight: 220, maxHeight: 340 }}>
-      <div className="edit-header">
+    <div className="edit-screen" style={{ maxWidth: 340, minWidth: 280, width: '100%', maxHeight: 340 }}>
+      <div className="edit-header modal-header-flex">
         <h2 className={!exerciseName.trim() ? 'placeholder' : ''}>
           {exerciseName.trim() ? exerciseName : 'Novo exercício'}
         </h2>
+        <button
+          className="close-modal-button"
+          onClick={handleClose}
+          aria-label="Fechar"
+        >
+          &#10005;
+        </button>
       </div>
       <div className="edit-content">
         {step === 1 && (
@@ -68,8 +83,8 @@ function AddExerciseScreen({ onAddExercise, sections, onCancel }) {
               />
             </div>
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancel}>
-                Cancelar
+              <button className="cancel-button" onClick={handleBack}>
+                Voltar
               </button>
               <button
                 className="confirm-button"
@@ -108,8 +123,8 @@ function AddExerciseScreen({ onAddExercise, sections, onCancel }) {
               )}
             </div>
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancel}>
-                Cancelar
+              <button className="cancel-button" onClick={handleBack}>
+                Voltar
               </button>
               <button
                 className="confirm-button"
@@ -139,8 +154,8 @@ function AddExerciseScreen({ onAddExercise, sections, onCancel }) {
               </div>
             </div>
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancel}>
-                Cancelar
+              <button className="cancel-button" onClick={handleBack}>
+                Voltar
               </button>
               <button
                 className="confirm-button"
