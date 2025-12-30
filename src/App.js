@@ -40,7 +40,13 @@ function App() {
   }, [darkMode]);
 
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router 
+      basename={process.env.PUBLIC_URL}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <Routes>
         <Route path="/" element={<Home darkMode={darkMode} />} />
         <Route path="/progressao-de-carga" element={<LoadProgression darkMode={darkMode} />} />

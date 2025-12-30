@@ -102,7 +102,7 @@
 .exercises-list {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 8px;
   margin-top: 20px;
 }
 
@@ -110,6 +110,21 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 3000px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+}
+
+.section-content.collapsed {
+  max-height: 0;
+  opacity: 0;
 }
 
 .section-header {
@@ -141,23 +156,6 @@
 
 .App.dark-mode .section-toggle-icon {
   color: #c0c0c0;
-}
-
-.section-content {
-  display: grid;
-  grid-template-rows: 1fr;
-  transition: grid-template-rows 0.3s ease, opacity 0.3s ease;
-  opacity: 1;
-  gap: 12px;
-}
-
-.section-content.collapsed {
-  grid-template-rows: 0fr;
-  opacity: 0;
-}
-
-.section-content > * {
-  overflow: hidden;
 }
 
 .section-title {
@@ -739,6 +737,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'Montserrat', sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .chart-section-button:hover {
@@ -756,6 +755,17 @@
   outline: none;
 }
 
+.chart-section-button:active:not(.selected) {
+  border-color: #e0e0e0;
+  color: #333;
+  background: white;
+}
+
+.chart-section-button:visited {
+  color: #333;
+  background: white;
+}
+
 .App.dark-mode .chart-section-button {
   background: #2d2d2d;
   border-color: #555;
@@ -771,6 +781,17 @@
   background: #FF4500;
   border-color: #FF4500;
   color: white;
+}
+
+.App.dark-mode .chart-section-button:active:not(.selected) {
+  border-color: #555;
+  color: #ddd;
+  background: #2d2d2d;
+}
+
+.App.dark-mode .chart-section-button:visited {
+  color: #ddd;
+  background: #2d2d2d;
 }
 
 .confirm-button:disabled {
