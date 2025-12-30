@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import './LoadProgression.css';
 
 function LoadProgression({ darkMode }) {
@@ -16,6 +16,7 @@ function LoadProgression({ darkMode }) {
   const [showChartModal, setShowChartModal] = useState(false);
   const [tempChartSection, setTempChartSection] = useState(null);
   const [tempChartExercise, setTempChartExercise] = useState(null);
+  const [hoveredPoint, setHoveredPoint] = useState(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('exercises');
@@ -573,8 +574,18 @@ function LoadProgression({ darkMode }) {
 
             {getChartData().length > 0 && (
               <div className="chart-container">
+                {hoveredPoint && hoveredPoint.date && (
+                  <div className="chart-info-box">
+                    <span className="chart-info-date">{hoveredPoint.date}</span>
+                    <span className="chart-info-weight">{hoveredPoint.peso} kg</span>
+                  </div>
+                )}
+                
                 <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={[{ date: '', peso: 0 }, ...getChartData()]} margin={{ top: 10, right: 5, left: -30, bottom: 0 }}>
+                  <LineChart 
+                    data={[{ date: '', peso: 0 }, ...getChartData()]} 
+                    margin={{ top: 10, right: 20, left: -30, bottom: 0 }}
+                  >
                     <defs>
                       <linearGradient id="colorPeso" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#FF4500" stopOpacity={0.1}/>
@@ -593,44 +604,32 @@ function LoadProgression({ darkMode }) {
                       style={{ fontSize: '0.85rem', fontFamily: 'Montserrat, sans-serif' }}
                       axisLine={{ stroke: darkMode ? '#555' : '#e0e0e0' }}
                     />
-                    <Tooltip 
-                      cursor={false}
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length > 0) {
-                          const data = payload[0].payload;
-                          // Não mostrar tooltip para o ponto inicial (0,0)
-                          if (data.date === '' || data.peso === 0) return null;
-                          
-                          return (
-                            <div style={{
-                              backgroundColor: darkMode ? '#3a3a3a' : 'white',
-                              border: `1px solid ${darkMode ? '#555' : '#e0e0e0'}`,
-                              borderRadius: '8px',
-                              color: darkMode ? '#ddd' : '#333',
-                              fontFamily: 'Montserrat, sans-serif',
-                              padding: '8px 10px',
-                              fontSize: '0.8rem',
-                              boxShadow: darkMode ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)'
-                            }}>
-                              <div style={{ color: darkMode ? '#ddd' : '#333', fontWeight: 600, marginBottom: '2px' }}>
-                                {data.date}
-                              </div>
-                              <div style={{ color: '#FF4500', fontWeight: 600 }}>
-                                {data.peso} kg
-                              </div>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
                     <Line 
                       type="monotone" 
                       dataKey="peso" 
                       stroke="#FF4500" 
                       strokeWidth={3}
-                      dot={{ fill: '#FF4500', strokeWidth: 2, r: 6, stroke: darkMode ? '#2d2d2d' : 'white' }}
-                      activeDot={{ r: 8, stroke: '#FF4500', strokeWidth: 2, fill: 'white' }}
+                      dot={(props) => {
+                        const { cx, cy, payload, index } = props;
+                        if (!payload.date || payload.peso === 0) return null;
+                        
+                        const isActive = hoveredPoint && hoveredPoint.date === payload.date && hoveredPoint.peso === payload.peso;
+                        
+                        return (
+                          <circle
+                            key={index}
+                            cx={cx}
+                            cy={cy}
+                            r={isActive ? 8 : 6}
+                            fill={isActive ? 'white' : '#FF4500'}
+                            stroke="#FF4500"
+                            strokeWidth={2}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setHoveredPoint(payload)}
+                          />
+                        );
+                      }}
+                      activeDot={false}
                       fill="url(#colorPeso)"
                     />
                   </LineChart>

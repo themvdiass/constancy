@@ -571,6 +571,35 @@
   color: #ddd;
 }
 
+.chart-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.App.dark-mode .chart-info {
+  background: #3a3a3a;
+}
+
+.chart-info-date {
+  color: #666;
+  font-weight: 600;
+}
+
+.App.dark-mode .chart-info-date {
+  color: #aaa;
+}
+
+.chart-info-weight {
+  color: #FF4500;
+  font-weight: 700;
+}
+
 .exercise-selector {
   margin-bottom: 25px;
 }
@@ -702,6 +731,31 @@
   background: rgba(0, 0, 0, 0.02);
   border-radius: 15px;
   border: 1px solid #f0f0f0;
+}
+
+.chart-info-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.chart-info-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.chart-info-weight {
+  font-size: 1rem;
+  color: #FF4500;
+  font-weight: 700;
 }
 
 .chart-container * {
