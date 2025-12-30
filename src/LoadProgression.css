@@ -586,7 +586,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.cancel-button,
 .confirm-button:disabled {
   transition: none !important;
   pointer-events: none;
