@@ -7,7 +7,7 @@ import AddExerciseScreen from './AddExerciseScreen';
 function LoadProgression({ darkMode, addMode }) {
   const [exercises, setExercises] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [currentView, setCurrentView] = useState('list'); // 'list' ou 'edit'
+  const [currentView, setCurrentView] = useState(addMode ? 'add' : 'list'); // 'list', 'edit' ou 'add'
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [selectedChartExercise, setSelectedChartExercise] = useState(null);
   const [exerciseName, setExerciseName] = useState('');
@@ -29,12 +29,11 @@ function LoadProgression({ darkMode, addMode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem('exercises');
+    let migratedExercises = [];
     if (saved) {
       const loadedExercises = JSON.parse(saved);
-      // Migrar dados antigos para novo formato com history
-      const migratedExercises = loadedExercises.map(ex => {
+      migratedExercises = loadedExercises.map(ex => {
         if (!ex.history && ex.weight !== undefined) {
-          // Formato antigo: converter para novo formato
           return {
             id: ex.id,
             name: ex.name,
@@ -48,16 +47,13 @@ function LoadProgression({ darkMode, addMode }) {
         }
         return ex;
       });
-      setExercises(migratedExercises);
-      // Salvar no novo formato
-      localStorage.setItem('exercises', JSON.stringify(migratedExercises));
-      
-      // Selecionar primeiro exercício para o gráfico
-      if (migratedExercises.length > 0) {
-        setSelectedChartExercise(migratedExercises[0].id);
-      }
     }
-  }, []);
+    setExercises(migratedExercises);
+    localStorage.setItem('exercises', JSON.stringify(migratedExercises));
+    if (migratedExercises.length > 0) {
+      setSelectedChartExercise(migratedExercises[0].id);
+    }
+  }, [addMode]);
 
   // Controlar overlay no body quando modais estiverem abertos
   useEffect(() => {
@@ -269,70 +265,65 @@ function LoadProgression({ darkMode, addMode }) {
     exercises.forEach(exercise => {
       const sectionName = exercise.section || 'Sem categoria';
       if (!grouped[sectionName]) {
-        grouped[sectionName] = [];
-      }
-      grouped[sectionName].push(exercise);
-    });
-    return grouped;
-  };
-
-  const getFilteredSections = () => {
-    const allSections = getUniqueSections();
-    if (!section.trim()) return allSections;
-    
-    return allSections.filter(sec => {
-      // Se o texto digitado for exatamente igual à seção, não mostrar
-      if (sec.toLowerCase() === section.toLowerCase().trim()) {
-        return false;
-      }
-      // Caso contrário, mostrar se a seção contém o texto digitado
-      return sec.toLowerCase().includes(section.toLowerCase());
-    });
-  };
-
-  const handleSectionChange = (value) => {
-    setSection(value);
-  };
-
-  const handleSectionClick = (sec) => {
-    setSection(sec);
-  };
-
-  const handleConfirmChartSelection = () => {
-    if (tempChartExercise) {
-      setSelectedChartExercise(tempChartExercise);
-      setHoveredPoint(null);
-      setShowChartModal(false);
-      setTempChartSection(null);
-      setTempChartExercise(null);
-    }
-  };
-
-  const getExercisesBySectionForChart = (sectionName) => {
-    return exercises.filter(ex => (ex.section || 'Sem categoria') === sectionName);
-  };
-
-  const getSelectedExerciseName = () => {
-    const exercise = exercises.find(ex => ex.id === selectedChartExercise);
-    return exercise ? exercise.name : 'Selecionar exercício';
-  };
-
-  const handleBackToList = () => {
-    setCurrentView('list');
-    setSelectedExercise(null);
-    setExerciseName('');
-    setWeight('');
-    setSection('');
-    setSelectedSection(null);
-    
-    // Remover a entrada do histórico se foi adicionada
-    if (window.history.state && window.history.state.view === 'edit') {
-      window.history.back();
-    }
-  };
-
-  return (
-    <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
+        return (
+          <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
+            <div className="load-progression-container">
+              {currentView === 'add' ? (
+                <AddExerciseScreen
+                  onAddExercise={handleAddExerciseScreen}
+                  sections={getUniqueSections()}
+                />
+              ) : currentView === 'list' && (
+                <>
+                  <h1 className="page-title">Exercícios</h1>
+                  <button className="add-exercise-button" onClick={() => navigate('/adicionar-exercicio')}>
+                    <Icon icon="pajamas:todo-add" className="add-icon" />
+                    Adicionar exercício
+                  </button>
+                  {exercises.length === 0 && (
+                    <div className="empty-state" onClick={() => navigate('/adicionar-exercicio')}>
+                      <Icon icon="pajamas:todo-add" className="empty-icon" />
+                      <span>Adicione um exercício para começar</span>
+                    </div>
+                  )}
+                  {exercises.length > 0 && (
+                    <div className="exercises-list">
+                      {Object.entries(groupExercisesBySection()).map(([sectionName, sectionExercises]) => (
+                        <div key={sectionName} className="section-group">
+                          <h3 className="section-title">{sectionName}</h3>
+                          {sectionExercises.map((exercise) => (
+                            <div 
+                              key={exercise.id} 
+                              className="exercise-item"
+                              onClick={() => handleExerciseClick(exercise)}
+                            >
+                              <div className="exercise-info">
+                                <span className="exercise-name">{exercise.name}</span>
+                                <span className="exercise-weight">{getLatestWeight(exercise)} kg</span>
+                              </div>
+                              <button 
+                                className="delete-button"
+                                onClick={(e) => handleDeleteExercise(exercise.id, e)}
+                                title="Remover exercício"
+                              >
+                                <Icon icon="mdi:close" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+              {currentView === 'edit' && selectedExercise && (
+                <div className="edit-screen">
+                  ...existing code...
+                </div>
+              )}
+            </div>
+          </div>
+        );
       <div className="load-progression-container">
         {addMode ? (
           <AddExerciseScreen
