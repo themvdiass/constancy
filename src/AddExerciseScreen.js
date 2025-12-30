@@ -97,7 +97,7 @@ function AddExerciseScreen({ onAddExercise, sections }) {
           </div>
         </div>
       </div>
-      <div className="modal-buttons" style={{ position: 'static', marginTop: 'auto' }}>
+      <div className="modal-buttons">
         <button className="cancel-button" onClick={handleCancel}>
           Cancelar
         </button>
