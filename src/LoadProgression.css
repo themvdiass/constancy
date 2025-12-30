@@ -11,16 +11,31 @@
   text-align: left;
 }
 .close-modal-button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #aaa;
-  cursor: pointer;
-  /* padding: 8px; */
-  margin-bottom: 10px;
-  z-index: 2;
-  /* transition: color 0.2s; */
-}
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  .close-modal-button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    background: none !important;
+  }
+  .close-modal-button:active {
+    outline: none !important;
+    box-shadow: none !important;
+    background: none !important;
+  }
+  .close-modal-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #aaa;
+    cursor: pointer;
+    /* padding: 8px; */
+    margin-bottom: 10px;
+    z-index: 2;
+    /* transition: color 0.2s; */
+  }
 .load-progression-container {
   padding: 20px 20px 40px 20px;
   background: white;
@@ -48,6 +63,7 @@
   position: relative;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  margin-bottom: 20px;
 }
 
 .edit-screen::-webkit-scrollbar {

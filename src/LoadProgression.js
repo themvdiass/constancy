@@ -195,17 +195,14 @@ function LoadProgression({ darkMode, addMode }) {
     const updatedExercises = exercises.map(ex => {
       if (ex.id === selectedExercise.id) {
         const updates = { ...selectedExercise };
-        
         // Atualizar nome se foi alterado
         if (exerciseName.trim() && exerciseName.trim() !== ex.name) {
           updates.name = exerciseName.trim();
         }
-        
-        // Atualizar seção se foi alterada
-        if (section.trim() && section.trim() !== ex.section) {
-          updates.section = section.trim();
+        // Atualizar seção (categoria)
+        if (section.trim() !== ex.section) {
+          updates.section = section.trim() ? section.trim() : 'Sem categoria';
         }
-        
         return updates;
       }
       return ex;
