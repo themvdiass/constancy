@@ -339,6 +339,7 @@ function Home({ darkMode }) {
       streakStart.setDate(streakStart.getDate() - 1);
     }
 
+    // Avançar streakStart para trás até encontrar o primeiro dia NÃO marcado (ignorando finais de semana no meio)
     while (true) {
       const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
       const hasCheck = checkedDays.includes(dateStr);
@@ -352,9 +353,21 @@ function Home({ darkMode }) {
         streakStart.setDate(streakStart.getDate() - 1);
       } else {
         // Encontrou um dia de semana sem check-in/bloqueio, fim da streak
-        streakStart.setDate(streakStart.getDate() + 1);
         break;
       }
+    }
+
+    // Agora, streakStart está no primeiro dia NÃO marcado (ou final de semana vazio antes da streak)
+    // Avançar para frente até o primeiro dia marcado (que será o início real da streak)
+    streakStart.setDate(streakStart.getDate() + 1);
+    while (true) {
+      const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
+      const hasCheck = checkedDays.includes(dateStr);
+      const hasBlock = blockedDays.includes(dateStr);
+      if (hasCheck || hasBlock) {
+        break;
+      }
+      streakStart.setDate(streakStart.getDate() + 1);
     }
 
     const day = String(streakStart.getDate()).padStart(2, '0');
