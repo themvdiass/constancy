@@ -102,63 +102,21 @@
 .exercises-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 24px;
   margin-top: 20px;
 }
 
 .section-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.section-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-height: 3000px;
-  overflow: hidden;
-  opacity: 1;
-  transition: max-height 0.35s ease, opacity 0.35s ease;
-}
-
-.section-content.collapsed {
-  max-height: 0;
-  opacity: 0;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  padding: 8px 0;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
-}
-
-.section-header:hover,
-.section-header:active,
-.section-header:focus {
-  outline: none;
-}
-
-.section-toggle-icon {
-  font-size: 20px;
-  color: #c0c0c0;
-  transition: transform 0.3s ease;
-}
-
-.App.dark-mode .section-toggle-icon {
-  color: #c0c0c0;
+  gap: 8px;
 }
 
 .section-title {
   font-size: 14px;
   font-weight: 600;
   color: #c0c0c0;
-  margin: 0;
+  margin: 0 0 8px 0;
 }
 
 .App.dark-mode .section-title {
@@ -321,8 +279,20 @@
   color: #333;
 }
 
+.modal-content h2.empty-title {
+  color: #929292;
+  opacity: 0.7;
+  font-style: italic;
+}
+
 .App.dark-mode .modal-content h2 {
   color: #ddd;
+}
+
+.App.dark-mode .modal-content h2.empty-title {
+  color: #929292;
+  opacity: 0.7;
+  font-style: italic;
 }
 
 .form-group {
@@ -337,8 +307,16 @@
   color: #666;
 }
 
+.form-group label.add-weight-label {
+  color: #FF4500;
+}
+
 .App.dark-mode .form-group label {
   color: #aaa;
+}
+
+.App.dark-mode .form-group label.add-weight-label {
+  color: #FF4500;
 }
 
 .form-group input {
@@ -352,9 +330,17 @@
   color: #333;
 }
 
+.form-group input.input-error {
+  border-color: #ff6b6b;
+  background: #fff5f5;
+}
+
 .form-group input:focus {
   outline: none;
-  border-color: #FF4500;
+}
+
+.form-group input.input-error:focus {
+  outline: none;
 }
 
 .App.dark-mode .form-group input {
@@ -363,8 +349,17 @@
   color: #ddd;
 }
 
+.App.dark-mode .form-group input.input-error {
+  border-color: #ff6b6b;
+  background: #3d2626;
+}
+
 .App.dark-mode .form-group input:focus {
-  border-color: #FF4500;
+  outline: none;
+}
+
+.App.dark-mode .form-group input.input-error:focus {
+  outline: none;
 }
 
 .section-tags {
@@ -415,6 +410,10 @@
 
 .App.dark-mode .section-tag:hover {
   opacity: 0.7;
+}
+
+.add-weight-label {
+  color: #FF4500;
 }
 
 .weight-input-container {
@@ -812,6 +811,22 @@
   font-size: 0.9rem;
   color: #FF4500;
   font-weight: 700;
+}
+
+.chart-section-modal {
+  margin-bottom: 20px;
+}
+
+.chart-section-modal label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.App.dark-mode .chart-section-modal label {
+  color: #aaa;
 }
 
 .chart-container * {

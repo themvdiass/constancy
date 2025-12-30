@@ -17,7 +17,6 @@ function LoadProgression({ darkMode }) {
   const [tempChartSection, setTempChartSection] = useState(null);
   const [tempChartExercise, setTempChartExercise] = useState(null);
   const [hoveredPoint, setHoveredPoint] = useState(null);
-  const [expandedSections, setExpandedSections] = useState({});
 
   useEffect(() => {
     const saved = localStorage.getItem('exercises');
@@ -220,23 +219,6 @@ function LoadProgression({ darkMode }) {
     return grouped;
   };
 
-  const toggleSection = (sectionName) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [sectionName]: !prev[sectionName]
-    }));
-  };
-
-  // Inicializar todas as seções como expandidas
-  useEffect(() => {
-    const sections = Object.keys(groupExercisesBySection());
-    const initialExpanded = {};
-    sections.forEach(section => {
-      initialExpanded[section] = true;
-    });
-    setExpandedSections(initialExpanded);
-  }, [exercises]);
-
   const getFilteredSections = () => {
     const allSections = getUniqueSections();
     if (!section.trim()) return allSections;
@@ -299,15 +281,8 @@ function LoadProgression({ darkMode }) {
           <div className="exercises-list">
             {Object.entries(groupExercisesBySection()).map(([sectionName, sectionExercises]) => (
               <div key={sectionName} className="section-group">
-                <div className="section-header" onClick={() => toggleSection(sectionName)}>
-                  <h3 className="section-title">{sectionName}</h3>
-                  <Icon 
-                    icon={expandedSections[sectionName] ? "mdi:chevron-up" : "mdi:chevron-down"} 
-                    className="section-toggle-icon"
-                  />
-                </div>
-                <div className={`section-content ${expandedSections[sectionName] ? 'expanded' : 'collapsed'}`}>
-                  {sectionExercises.map((exercise) => (
+                <h3 className="section-title">{sectionName}</h3>
+                {sectionExercises.map((exercise) => (
                   <div 
                     key={exercise.id} 
                     className="exercise-item"
@@ -326,7 +301,6 @@ function LoadProgression({ darkMode }) {
                     </button>
                   </div>
                 ))}
-                </div>
               </div>
             ))}
           </div>
@@ -412,7 +386,7 @@ function LoadProgression({ darkMode }) {
             setSelectedSection(null);
           }}>
             <div className="modal-content modal-edit" onClick={(e) => e.stopPropagation()}>
-              <h2>Editar exercício</h2>
+              <h2>{exerciseName || '\u00A0'}</h2>
               
               <div className="form-group">
                 <label>Nome do exercício</label>
@@ -421,6 +395,7 @@ function LoadProgression({ darkMode }) {
                   value={exerciseName}
                   onChange={(e) => setExerciseName(e.target.value)}
                   placeholder="Ex: Supino reto"
+                  className={exerciseName.trim() ? '' : 'input-error'}
                 />
               </div>
 
@@ -449,7 +424,10 @@ function LoadProgression({ darkMode }) {
               </div>
 
               <div className="form-group">
-                <label>Adicionar nova carga</label>
+                <label className="add-weight-label">
+                  <Icon icon="fluent:flash-add-20-filled" style={{ marginRight: '6px', fontSize: '1.1rem', verticalAlign: 'middle', color: '#FF4500' }} />
+                  Adicionar nova carga
+                </label>
                 <div className="weight-input-container">
                   <input
                     type="number"
@@ -462,6 +440,77 @@ function LoadProgression({ darkMode }) {
                   <span className="weight-unit">kg</span>
                 </div>
               </div>
+
+              {selectedExercise.history.length > 1 && (
+                <div className="chart-section-modal">
+                  <label>Progressão de carga</label>
+                  {hoveredPoint && hoveredPoint.date && (
+                    <div className="chart-info-box">
+                      <span className="chart-info-date">{hoveredPoint.date}</span>
+                      <span className="chart-info-weight">{hoveredPoint.peso} kg</span>
+                    </div>
+                  )}
+                  <ResponsiveContainer width="100%" height={200}>
+                    <LineChart 
+                      data={[
+                        { date: '', peso: 0 },
+                        ...selectedExercise.history.map(entry => ({
+                          date: formatDate(entry.date),
+                          peso: entry.weight
+                        }))
+                      ]} 
+                      margin={{ top: 10, right: 20, left: -30, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="colorPeso" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#FF4500" stopOpacity={0.1}/>
+                          <stop offset="95%" stopColor="#FF4500" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#444' : '#e0e0e0'} opacity={0.3} />
+                      <XAxis 
+                        dataKey="date" 
+                        stroke={darkMode ? '#555' : '#ccc'}
+                        tick={false}
+                        axisLine={{ stroke: darkMode ? '#555' : '#e0e0e0' }}
+                      />
+                      <YAxis 
+                        stroke={darkMode ? '#aaa' : '#666'}
+                        style={{ fontSize: '0.85rem', fontFamily: 'Montserrat, sans-serif' }}
+                        axisLine={{ stroke: darkMode ? '#555' : '#e0e0e0' }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="peso" 
+                        stroke="#FF4500" 
+                        strokeWidth={3}
+                        dot={(props) => {
+                          const { cx, cy, payload, index } = props;
+                          if (!payload.date || payload.peso === 0) return null;
+                          
+                          const isActive = hoveredPoint && hoveredPoint.date === payload.date && hoveredPoint.peso === payload.peso;
+                          
+                          return (
+                            <circle
+                              key={index}
+                              cx={cx}
+                              cy={cy}
+                              r={isActive ? 8 : 6}
+                              fill={isActive ? 'white' : '#FF4500'}
+                              stroke="#FF4500"
+                              strokeWidth={2}
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => setHoveredPoint(payload)}
+                            />
+                          );
+                        }}
+                        activeDot={false}
+                        fill="url(#colorPeso)"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
 
               <div className="history-section">
                 <label>Histórico de cargas</label>
@@ -507,162 +556,15 @@ function LoadProgression({ darkMode }) {
                 }}>
                   Cancelar
                 </button>
-                <button className="confirm-button" onClick={handleUpdateExercise}>
+                <button 
+                  className="confirm-button" 
+                  onClick={handleUpdateExercise}
+                  disabled={!exerciseName.trim()}
+                >
                   Salvar
                 </button>
               </div>
             </div>
-          </div>
-        )}
-
-        {exercises.length > 0 && (
-          <div className="chart-section">
-            <h2 className="chart-title">Progressão de carga</h2>
-            
-            <div className="exercise-selector">
-              <label>Exercício do gráfico:</label>
-              <button 
-                className="chart-exercise-button"
-                onClick={() => setShowChartModal(true)}
-              >
-                {getSelectedExerciseName()}
-              </button>
-            </div>
-
-            {showChartModal && (
-              <div className="modal-overlay" onClick={() => {
-                setShowChartModal(false);
-                setTempChartSection(null);
-                setTempChartExercise(null);
-              }}>
-                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                  <h2>Selecionar exercício</h2>
-                  
-                  <div className="form-group">
-                    <label>1. Selecione a categoria</label>
-                    <div className="chart-selection-grid">
-                      {Object.keys(groupExercisesBySection()).map((sectionName) => (
-                        <button
-                          key={sectionName}
-                          type="button"
-                          className={`chart-section-button ${
-                            tempChartSection === sectionName ? 'selected' : ''
-                          }`}
-                          onClick={() => {
-                            setTempChartSection(sectionName);
-                            setTempChartExercise(null);
-                          }}
-                        >
-                          {sectionName}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {tempChartSection && (
-                    <div className="form-group">
-                      <label>2. Selecione o exercício</label>
-                      <div className="chart-selection-grid">
-                        {getExercisesBySectionForChart(tempChartSection).map((exercise) => (
-                          <button
-                            key={exercise.id}
-                            type="button"
-                            className={`chart-section-button ${
-                              tempChartExercise === exercise.id ? 'selected' : ''
-                            }`}
-                            onClick={() => setTempChartExercise(exercise.id)}
-                          >
-                            {exercise.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="modal-buttons">
-                    <button className="cancel-button" onClick={() => {
-                      setShowChartModal(false);
-                      setTempChartSection(null);
-                      setTempChartExercise(null);
-                    }}>
-                      Cancelar
-                    </button>
-                    <button 
-                      className="confirm-button" 
-                      onClick={handleConfirmChartSelection}
-                      disabled={!tempChartExercise}
-                    >
-                      Confirmar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {getChartData().length > 0 && (
-              <div className="chart-container">
-                {hoveredPoint && hoveredPoint.date && (
-                  <div className="chart-info-box">
-                    <span className="chart-info-date">{hoveredPoint.date}</span>
-                    <span className="chart-info-weight">{hoveredPoint.peso} kg</span>
-                  </div>
-                )}
-                
-                <ResponsiveContainer width="100%" height={250}>
-                  <LineChart 
-                    data={[{ date: '', peso: 0 }, ...getChartData()]} 
-                    margin={{ top: 10, right: 20, left: -30, bottom: 0 }}
-                  >
-                    <defs>
-                      <linearGradient id="colorPeso" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#FF4500" stopOpacity={0.1}/>
-                        <stop offset="95%" stopColor="#FF4500" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#444' : '#e0e0e0'} opacity={0.3} />
-                    <XAxis 
-                      dataKey="date" 
-                      stroke={darkMode ? '#555' : '#ccc'}
-                      tick={false}
-                      axisLine={{ stroke: darkMode ? '#555' : '#e0e0e0' }}
-                    />
-                    <YAxis 
-                      stroke={darkMode ? '#aaa' : '#666'}
-                      style={{ fontSize: '0.85rem', fontFamily: 'Montserrat, sans-serif' }}
-                      axisLine={{ stroke: darkMode ? '#555' : '#e0e0e0' }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="peso" 
-                      stroke="#FF4500" 
-                      strokeWidth={3}
-                      dot={(props) => {
-                        const { cx, cy, payload, index } = props;
-                        if (!payload.date || payload.peso === 0) return null;
-                        
-                        const isActive = hoveredPoint && hoveredPoint.date === payload.date && hoveredPoint.peso === payload.peso;
-                        
-                        return (
-                          <circle
-                            key={index}
-                            cx={cx}
-                            cy={cy}
-                            r={isActive ? 8 : 6}
-                            fill={isActive ? 'white' : '#FF4500'}
-                            stroke="#FF4500"
-                            strokeWidth={2}
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => setHoveredPoint(payload)}
-                          />
-                        );
-                      }}
-                      activeDot={false}
-                      fill="url(#colorPeso)"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            )}
           </div>
         )}
       </div>
