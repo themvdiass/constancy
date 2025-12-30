@@ -185,7 +185,7 @@ function LoadProgression({ darkMode }) {
     
     const updatedExercises = exercises.map(ex => {
       if (ex.id === selectedExercise.id) {
-        const updates = { ...ex };
+        const updates = { ...selectedExercise };
         
         // Atualizar nome se foi alterado
         if (exerciseName.trim() && exerciseName.trim() !== ex.name) {
@@ -216,25 +216,13 @@ function LoadProgression({ darkMode }) {
   };
 
   const handleDeleteWeight = (exerciseId, weightIndex) => {
-    const updatedExercises = exercises.map(ex => {
-      if (ex.id === exerciseId) {
-        return {
-          ...ex,
-          history: ex.history.filter((_, index) => index !== weightIndex)
-        };
-      }
-      return ex;
-    });
-    
-    setExercises(updatedExercises);
-    localStorage.setItem('exercises', JSON.stringify(updatedExercises));
-    
-    // Atualizar o exercício selecionado no modal
+    // Atualizar apenas o exercício selecionado localmente
     if (selectedExercise && selectedExercise.id === exerciseId) {
-      const updatedSelected = updatedExercises.find(ex => ex.id === exerciseId);
-      if (updatedSelected) {
-        setSelectedExercise(updatedSelected);
-      }
+      const updatedSelected = {
+        ...selectedExercise,
+        history: selectedExercise.history.filter((_, index) => index !== weightIndex)
+      };
+      setSelectedExercise(updatedSelected);
     }
   };
 
