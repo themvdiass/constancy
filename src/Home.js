@@ -33,12 +33,81 @@ function Home({ darkMode }) {
     if (savedBlocked) {
       setBlockedDays(JSON.parse(savedBlocked));
     }
-
-    const savedGems = localStorage.getItem('gems');
-    if (savedGems) {
-      setGems(Number(savedGems));
-    }
   }, []);
+
+  const calculateCorrectGems = () => {
+    // Obter todas as datas (checks e blocks) e ordená-las
+    const allDates = [...checkedDays, ...blockedDays]
+      .filter(dateStr => dateStr && typeof dateStr === 'string')
+      .map(dateStr => {
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        date.setHours(0, 0, 0, 0);
+        return date;
+      })
+      .sort((a, b) => a - b);
+
+    if (allDates.length === 0) return 0;
+
+    let totalGemsEarned = 0;
+    let streakCount = 0;
+    let lastDate = null;
+    let lastMilestone = 0;
+
+    for (const date of allDates) {
+      if (lastDate) {
+        const daysDiff = Math.floor((date - lastDate) / (1000 * 60 * 60 * 24));
+        
+        // Verificar se houve quebra de streak
+        let streakBroken = false;
+        if (daysDiff > 1) {
+          // Verificar se os dias entre as datas são apenas finais de semana
+          let checkDate = new Date(lastDate);
+          
+          for (let i = 1; i < daysDiff; i++) {
+            checkDate.setDate(checkDate.getDate() + 1);
+            const dayOfWeek = checkDate.getDay();
+            
+            // Se encontrar um dia de semana (seg-sex) não marcado, quebra a streak
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+              streakBroken = true;
+              break;
+            }
+          }
+        }
+
+        if (streakBroken) {
+          streakCount = 1;
+          lastMilestone = 0;
+        } else {
+          streakCount++;
+        }
+      } else {
+        streakCount = 1;
+        lastMilestone = 0;
+      }
+
+      // Verificar se atingiu novos milestones de 15 dias
+      const currentMilestone = Math.floor(streakCount / 15);
+      if (currentMilestone > lastMilestone) {
+        totalGemsEarned += (currentMilestone - lastMilestone);
+        lastMilestone = currentMilestone;
+      }
+
+      lastDate = date;
+    }
+
+    // Subtrair as gemas que foram usadas (número de bloqueios aplicados)
+    const gemsUsed = blockedDays.length;
+    return Math.max(0, totalGemsEarned - gemsUsed);
+  };
+
+  // Recalcular gemas sempre que checkedDays ou blockedDays mudarem
+  useEffect(() => {
+    const correctGems = calculateCorrectGems();
+    setGems(correctGems);
+    localStorage.setItem('gems', correctGems.toString());
+  }, [checkedDays, blockedDays]);
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
@@ -209,9 +278,6 @@ function Home({ darkMode }) {
     
     const newStreak = calculateStreak() + 1;
     if (newStreak % 15 === 0) {
-      const newGems = gems + 1;
-      setGems(newGems);
-      localStorage.setItem('gems', newGems.toString());
       setShakeGems(true);
       setTimeout(() => setShakeGems(false), 600);
     }
@@ -225,10 +291,10 @@ function Home({ darkMode }) {
       const newBlockedDays = [...blockedDays, dateStr];
       setBlockedDays(newBlockedDays);
       localStorage.setItem('blockedDays', JSON.stringify(newBlockedDays));
-      
-      const newGems = gems - 1;
-      setGems(newGems);
-      localStorage.setItem('gems', newGems.toString());
+    } else if (gems === 0 || calculateStreak() === 0) {
+      // Animação de shake quando não há gemas disponíveis ou streak é 0
+      setShakeGems(true);
+      setTimeout(() => setShakeGems(false), 600);
     }
   };
 
@@ -258,10 +324,6 @@ function Home({ darkMode }) {
       const newBlockedDays = blockedDays.filter(d => d !== dateStr);
       setBlockedDays(newBlockedDays);
       localStorage.setItem('blockedDays', JSON.stringify(newBlockedDays));
-      
-      const newGems = gems + 1;
-      setGems(newGems);
-      localStorage.setItem('gems', newGems.toString());
     }
   };
 
