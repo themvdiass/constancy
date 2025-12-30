@@ -561,7 +561,7 @@ function LoadProgression({ darkMode, addMode }) {
                 </div>
               </div>
 
-              <div className="modal-buttons">
+              <div className="modal-buttons" style={{ marginBottom: '20px' }}>
                 <button className="cancel-button" onClick={handleBackToList}>
                   Cancelar
                 </button>

@@ -630,7 +630,6 @@ html.modal-open, body.modal-open {
 .modal-buttons {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
   justify-content: flex-end;
 }
 
