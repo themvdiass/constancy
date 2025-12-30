@@ -330,33 +330,37 @@ function Home({ darkMode }) {
   const formatStreakStartDate = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const todayCheck = isTodayChecked();
     const todayBlock = isTodayBlocked();
-    
+
     let streakStart = new Date(today);
     if (!todayCheck && !todayBlock) {
       streakStart.setDate(streakStart.getDate() - 1);
     }
-    
+
     while (true) {
       const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
-      
       const hasCheck = checkedDays.includes(dateStr);
       const hasBlock = blockedDays.includes(dateStr);
-      
+      const dayOfWeek = streakStart.getDay(); // 0 = domingo, 6 = sábado
+
       if (hasCheck || hasBlock) {
         streakStart.setDate(streakStart.getDate() - 1);
+      } else if (dayOfWeek === 0 || dayOfWeek === 6) {
+        // Se for final de semana, apenas pule para o dia anterior
+        streakStart.setDate(streakStart.getDate() - 1);
       } else {
+        // Encontrou um dia de semana sem check-in/bloqueio, fim da streak
         streakStart.setDate(streakStart.getDate() + 1);
         break;
       }
     }
-    
+
     const day = String(streakStart.getDate()).padStart(2, '0');
     const month = String(streakStart.getMonth() + 1).padStart(2, '0');
     const year = streakStart.getFullYear();
-    
+
     return `${day}/${month}/${year}`;
   };
 
