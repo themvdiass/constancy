@@ -338,6 +338,7 @@
 }
 
 .modal-content {
+    padding-top: env(safe-area-inset-top, 0px);
   background: white;
   padding: 30px;
   border-radius: 15px;
