@@ -41,7 +41,7 @@ function AddExerciseScreen({ onAddExercise, sections }) {
   };
 
   return (
-    <div className="edit-screen" style={{ minHeight: '80vh', height: '80vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="edit-screen" style={{ minHeight: '100vh', height: '100vh', display: 'flex', flexDirection: 'column', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
       <div className="edit-header">
         <h2 className={!exerciseName.trim() ? 'placeholder' : ''}>
           {exerciseName.trim() ? exerciseName : 'Novo exercício'}
