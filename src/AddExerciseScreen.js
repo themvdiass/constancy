@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import './LoadProgression.css';
 
-function AddExerciseScreen({ onAddExercise, sections }) {
+function AddExerciseScreen({ onAddExercise, sections, onCancel }) {
   const [exerciseName, setExerciseName] = useState('');
   const [weight, setWeight] = useState('');
   const [section, setSection] = useState('');
@@ -27,7 +27,11 @@ function AddExerciseScreen({ onAddExercise, sections }) {
   };
 
   const handleCancel = () => {
-    navigate('/progressao-de-carga');
+    if (onCancel) {
+      onCancel();
+    } else {
+      navigate('/progressao-de-carga');
+    }
   };
 
   // Função para filtrar as tags igual à tela de edição

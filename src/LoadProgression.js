@@ -334,56 +334,58 @@ function LoadProgression({ darkMode, addMode }) {
   return (
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <div className="load-progression-container">
-        {addMode ? (
-          <AddExerciseScreen
-            onAddExercise={handleAddExerciseScreen}
-            sections={getUniqueSections()}
-          />
-        ) : currentView === 'list' && (
-          <>
-            <h1 className="page-title">Exercícios</h1>
-        
-        <button className="add-exercise-button" onClick={() => navigate('/adicionar-exercicio')}>
-          <Icon icon="pajamas:todo-add" className="add-icon" />
-          Adicionar exercício
-        </button>
-
-        {exercises.length === 0 && (
-          <div className="empty-state" onClick={() => navigate('/adicionar-exercicio')}>
-            <Icon icon="pajamas:todo-add" className="empty-icon" />
-            <span>Adicione um exercício para começar</span>
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal-content modal-edit">
+              <AddExerciseScreen
+                onAddExercise={(ex) => { handleAddExerciseScreen(ex); setShowModal(false); }}
+                onCancel={() => setShowModal(false)}
+                sections={getUniqueSections()}
+              />
+            </div>
           </div>
         )}
-
-        {exercises.length > 0 && (
-          <div className="exercises-list">
-            {Object.entries(groupExercisesBySection()).map(([sectionName, sectionExercises]) => (
-              <div key={sectionName} className="section-group">
-                <h3 className="section-title">{sectionName}</h3>
-                {sectionExercises.map((exercise) => (
-                  <div 
-                    key={exercise.id} 
-                    className="exercise-item"
-                    onClick={() => handleExerciseClick(exercise)}
-                  >
-                    <div className="exercise-info">
-                      <span className="exercise-name">{exercise.name}</span>
-                      <span className="exercise-weight">{getLatestWeight(exercise)} kg</span>
-                    </div>
-                    <button 
-                      className="delete-button"
-                      onClick={(e) => handleDeleteExercise(exercise.id, e)}
-                      title="Remover exercício"
-                    >
-                      <Icon icon="mdi:close" />
-                    </button>
+        {currentView === 'list' && (
+          <>
+            <h1 className="page-title">Exercícios</h1>
+            <button className="add-exercise-button" onClick={() => setShowModal(true)}>
+              <Icon icon="pajamas:todo-add" className="add-icon" />
+              Adicionar exercício
+            </button>
+            {exercises.length === 0 && (
+              <div className="empty-state" onClick={() => setShowModal(true)}>
+                <Icon icon="pajamas:todo-add" className="empty-icon" />
+                <span>Adicione um exercício para começar</span>
+              </div>
+            )}
+            {exercises.length > 0 && (
+              <div className="exercises-list">
+                {Object.entries(groupExercisesBySection()).map(([sectionName, sectionExercises]) => (
+                  <div key={sectionName} className="section-group">
+                    <h3 className="section-title">{sectionName}</h3>
+                    {sectionExercises.map((exercise) => (
+                      <div 
+                        key={exercise.id} 
+                        className="exercise-item"
+                        onClick={() => handleExerciseClick(exercise)}
+                      >
+                        <div className="exercise-info">
+                          <span className="exercise-name">{exercise.name}</span>
+                          <span className="exercise-weight">{getLatestWeight(exercise)} kg</span>
+                        </div>
+                        <button 
+                          className="delete-button"
+                          onClick={(e) => handleDeleteExercise(exercise.id, e)}
+                          title="Remover exercício"
+                        >
+                          <Icon icon="mdi:close" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
-            ))}
-          </div>
-        )}
-
+            )}
           </>
         )}
 
