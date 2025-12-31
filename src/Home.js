@@ -306,10 +306,10 @@ function Home({ darkMode }) {
   const handleBlockButtonClick = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    if (isHoliday(today)) {
-      // Não permite bloqueio em feriado
-      setShakeGems(true);
-      setTimeout(() => setShakeGems(false), 600);
+    const dayOfWeek = today.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    if (isHoliday(today) || isWeekend) {
+      // Não faz nada, botão estará desabilitado
       return;
     }
     if (gems > 0 && !isTodayBlocked() && !isTodayChecked() && calculateStreak() > 0) {
@@ -590,8 +590,9 @@ function Home({ darkMode }) {
           </button>
 
           <button 
-            className={`block-button ${isTodayBlocked() || gems <= 0 || isTodayChecked() || calculateStreak() === 0 ? 'disabled' : ''}`}
+            className={`block-button ${isTodayBlocked() || gems <= 0 || isTodayChecked() || calculateStreak() === 0 || isHoliday(new Date()) || (() => { const d = new Date(); return d.getDay() === 0 || d.getDay() === 6; })() ? 'disabled' : ''}`}
             onClick={handleBlockButtonClick}
+            disabled={isTodayBlocked() || gems <= 0 || isTodayChecked() || calculateStreak() === 0 || isHoliday(new Date()) || (() => { const d = new Date(); return d.getDay() === 0 || d.getDay() === 6; })()}
             title={
               isTodayBlocked() 
                 ? 'Bloqueio já usado hoje!' 
@@ -601,7 +602,11 @@ function Home({ darkMode }) {
                     ? 'Check-in já feito hoje'
                     : calculateStreak() === 0
                       ? 'Sem ofensiva ativa para proteger'
-                      : 'Usar bloqueio'
+                      : isHoliday(new Date())
+                        ? 'Não é possível usar bloqueio em feriado'
+                        : (() => { const d = new Date(); return d.getDay() === 0 || d.getDay() === 6; })()
+                          ? 'Não é possível usar bloqueio em finais de semana'
+                          : 'Usar bloqueio'
             }
           >
             <Icon icon="ri:diamond-fill" className="icon" />
