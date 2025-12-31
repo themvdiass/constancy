@@ -228,6 +228,7 @@
   flex-direction: column;
   gap: 24px;
   margin-top: 20px;
+  padding-bottom: 50px;
 }
 
 .section-group {

@@ -396,8 +396,39 @@ h1 {
   background: transparent;
 }
 
+
 .calendar-day.weekend {
   color: #ff6b35;
+}
+
+/* Feriado só tem cor especial se não estiver marcado */
+
+
+.calendar-day.holiday:not(.checked):not(.blocked) {
+  background: #ffe0c5 !important;
+  color: #ff4500 !important;
+  border: 2px solid #ffe0c5 !important;
+}
+
+/* Garante que checked/blocked sempre prevaleçam sobre holiday */
+.calendar-day.checked,
+.calendar-day.blocked {
+  background: #FF4500 !important;
+  color: white !important;
+  font-weight: 700;
+}
+.calendar-day.blocked {
+  background: #6c63ff !important;
+}
+.App.dark-mode .calendar-day.checked,
+.App.dark-mode .calendar-day.blocked {
+  color: white !important;
+}
+
+.App.dark-mode .calendar-day.holiday:not(.checked):not(.blocked) {
+  background: #a67c00 !important;
+  color: #ffe0c5 !important;
+  border: 2px solid #a67c00 !important;
 }
 
 .calendar-day.weekend.checked {
@@ -426,11 +457,25 @@ h1 {
   font-weight: 700;
 }
 
+
 .calendar-day.old-streak {
   background: #999 !important;
-  color: white;
+  color: white !important;
   font-weight: 700;
   opacity: 0.6;
+}
+
+/* Garante que feriados marcados fora da ofensiva fiquem cinza */
+.calendar-day.holiday.old-streak,
+.calendar-day.old-streak.holiday,
+.calendar-day.holiday.old-streak:not(.checked):not(.blocked),
+.calendar-day.old-streak.holiday:not(.checked):not(.blocked) {
+  background: #999 !important;
+  color: white !important;
+  border: 2px solid #999 !important;
+  opacity: 0.6 !important;
+  box-shadow: none !important;
+  filter: none !important;
 }
 
 .App.dark-mode .calendar-day.old-streak {
@@ -484,25 +529,15 @@ h1 {
   font-weight: 700;
 }
 
-.calendar-day:active {
-  transform: none !important;
-  background: inherit !important;
-}
-
-.calendar-day:not(.editable):active {
-  background: inherit !important;
-}
-
-.App.dark-mode .calendar-day:not(.editable):active {
-  background: #3a3a3a !important;
-}
-
-.calendar-day.weekend:not(.editable):active {
-  background: #f5f5f5 !important;
-}
-
-.App.dark-mode .calendar-day.weekend:not(.editable):active {
-  background: #3a3a3a !important;
+/* Remove qualquer efeito visual de clique dos dias do calendário fora do modo edição */
+/* Remove apenas o efeito de clique, sem alterar cor ou texto */
+.calendar-day:not(.editable):active,
+.calendar-day:not(.editable):focus {
+  /* background: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  filter: none !important;
+  transition: none !important; */
 }
 
 /* Mensagem Motivacional */

@@ -4,6 +4,29 @@ import { Icon } from '@iconify/react';
 import './App.css';
 
 function Home({ darkMode }) {
+    // Lista de feriados nacionais fixos (dd-mm)
+    const fixedHolidays = [
+      '01-01', // Confraternização Universal
+      '21-04', // Tiradentes
+      '01-05', // Dia do Trabalho
+      '07-09', // Independência
+      '12-10', // Nossa Senhora Aparecida
+      '02-11', // Finados
+      '15-11', // Proclamação da República
+      '25-12', // Natal
+      '24-12', // Véspera de Natal (extra)
+      '31-12', // Véspera de Ano Novo (extra)
+    ];
+
+    // Função para verificar se é feriado nacional fixo, 24/12 ou 31/12
+    function isHoliday(date) {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const key = `${day}-${month}`;
+      if (fixedHolidays.includes(key)) return true;
+      // Feriados móveis (Carnaval, Sexta Santa, Corpus Christi, etc) não incluídos
+      return false;
+    }
   const navigate = useNavigate();
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -57,25 +80,21 @@ function Home({ darkMode }) {
     for (const date of allDates) {
       if (lastDate) {
         const daysDiff = Math.floor((date - lastDate) / (1000 * 60 * 60 * 24));
-        
-        // Verificar se houve quebra de streak
         let streakBroken = false;
         if (daysDiff > 1) {
-          // Verificar se os dias entre as datas são apenas finais de semana
           let checkDate = new Date(lastDate);
-          
           for (let i = 1; i < daysDiff; i++) {
             checkDate.setDate(checkDate.getDate() + 1);
             const dayOfWeek = checkDate.getDay();
-            
-            // Se encontrar um dia de semana (seg-sex) não marcado, quebra a streak
-            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const isFeriado = isHoliday(checkDate);
+            // Se encontrar um dia útil não marcado, quebra a streak
+            if (!isWeekend && !isFeriado) {
               streakBroken = true;
               break;
             }
           }
         }
-
         if (streakBroken) {
           streakCount = 1;
           lastMilestone = 0;
@@ -198,73 +217,74 @@ function Home({ darkMode }) {
   const calculateStreak = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     let streak = 0;
     let currentDate = new Date(today);
-    
+
     const todayCheck = isTodayChecked();
     const todayBlock = isTodayBlocked();
-    
+
     if (!todayCheck && !todayBlock) {
       currentDate.setDate(currentDate.getDate() - 1);
     }
-    
+
     while (true) {
       const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
       const dayOfWeek = currentDate.getDay(); // 0 = domingo, 6 = sábado
-      
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      const isFeriado = isHoliday(currentDate);
+
       const hasCheck = checkedDays.includes(dateStr);
       const hasBlock = blockedDays.includes(dateStr);
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      
+
       if (hasCheck || hasBlock) {
         streak++;
         currentDate.setDate(currentDate.getDate() - 1);
-      } else if (isWeekend) {
-        // Finais de semana sem check-in não quebram a streak, apenas pula
+      } else if (isWeekend || isFeriado) {
+        // Se for fim de semana/feriado e não marcado, apenas pule (não conta na streak)
         currentDate.setDate(currentDate.getDate() - 1);
       } else {
         break;
       }
     }
-    
     return streak;
   };
 
   const isInCurrentStreak = (day) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const dayDate = new Date(currentYear, currentMonth, day);
     dayDate.setHours(0, 0, 0, 0);
-    
+
     const todayCheck = isTodayChecked();
     const todayBlock = isTodayBlocked();
-    
+
     let streakStart = new Date(today);
     if (!todayCheck && !todayBlock) {
       streakStart.setDate(streakStart.getDate() - 1);
     }
-    
+
     while (true) {
       const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
       const dayOfWeek = streakStart.getDay(); // 0 = domingo, 6 = sábado
-      
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      const isFeriado = isHoliday(streakStart);
+
       const hasCheck = checkedDays.includes(dateStr);
       const hasBlock = blockedDays.includes(dateStr);
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      
+
       if (hasCheck || hasBlock) {
         streakStart.setDate(streakStart.getDate() - 1);
-      } else if (isWeekend) {
-        // Finais de semana sem check-in não quebram a streak, apenas pula
+      } else if (isWeekend || isFeriado) {
+        // Finais de semana ou feriados sem check-in não quebram a streak, apenas pula
         streakStart.setDate(streakStart.getDate() - 1);
       } else {
         streakStart.setDate(streakStart.getDate() + 1);
         break;
       }
     }
-    
+
     return dayDate >= streakStart && dayDate <= today;
   };
 
@@ -284,10 +304,16 @@ function Home({ darkMode }) {
   };
 
   const handleBlockButtonClick = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (isHoliday(today)) {
+      // Não permite bloqueio em feriado
+      setShakeGems(true);
+      setTimeout(() => setShakeGems(false), 600);
+      return;
+    }
     if (gems > 0 && !isTodayBlocked() && !isTodayChecked() && calculateStreak() > 0) {
-      const today = new Date();
       const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-      
       const newBlockedDays = [...blockedDays, dateStr];
       setBlockedDays(newBlockedDays);
       localStorage.setItem('blockedDays', JSON.stringify(newBlockedDays));
@@ -339,17 +365,19 @@ function Home({ darkMode }) {
       streakStart.setDate(streakStart.getDate() - 1);
     }
 
-    // Avançar streakStart para trás até encontrar o primeiro dia NÃO marcado (ignorando finais de semana no meio)
+    // Avançar streakStart para trás até encontrar o primeiro dia NÃO marcado (ignorando finais de semana e feriados no meio)
     while (true) {
       const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
       const hasCheck = checkedDays.includes(dateStr);
       const hasBlock = blockedDays.includes(dateStr);
       const dayOfWeek = streakStart.getDay(); // 0 = domingo, 6 = sábado
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      const isFeriado = isHoliday(streakStart);
 
       if (hasCheck || hasBlock) {
         streakStart.setDate(streakStart.getDate() - 1);
-      } else if (dayOfWeek === 0 || dayOfWeek === 6) {
-        // Se for final de semana, apenas pule para o dia anterior
+      } else if (isWeekend || isFeriado) {
+        // Se for final de semana ou feriado, apenas pule para o dia anterior
         streakStart.setDate(streakStart.getDate() - 1);
       } else {
         // Encontrou um dia de semana sem check-in/bloqueio, fim da streak
@@ -357,7 +385,7 @@ function Home({ darkMode }) {
       }
     }
 
-    // Agora, streakStart está no primeiro dia NÃO marcado (ou final de semana vazio antes da streak)
+    // Agora, streakStart está no primeiro dia NÃO marcado (ou final de semana/feriado vazio antes da streak)
     // Avançar para frente até o primeiro dia marcado (que será o início real da streak)
     streakStart.setDate(streakStart.getDate() + 1);
     while (true) {
@@ -414,12 +442,28 @@ function Home({ darkMode }) {
       const todayIncomplete = !isTodayChecked() && !isTodayBlocked();
       const isPast = dayDate < todayDate;
 
+      // Verifica se é feriado nacional, 24/12 ou 31/12
+      const calendarDayDate = new Date(currentYear, currentMonth, day);
+      calendarDayDate.setHours(0, 0, 0, 0);
+      const isFeriadoEspecial = isHoliday(calendarDayDate);
+
+      // Garante que a cor de feriado sempre prevaleça
+      let calendarClass = `calendar-day`;
+      if (isWeekendDay) calendarClass += ' weekend';
+      if (isFeriadoEspecial) calendarClass += ' holiday';
+      if (isToday) calendarClass += ' today';
+      if (isInStreak) calendarClass += ' checked';
+      if (isOldStreak) calendarClass += ' old-streak';
+      if (blocked) calendarClass += ' blocked';
+      if (editMode) calendarClass += ' editable';
+      if (isFuture) calendarClass += ' future';
+
       days.push(
         <div 
           key={day} 
-          className={`calendar-day ${isWeekendDay ? 'weekend' : ''} ${isToday ? 'today' : ''} ${isInStreak ? 'checked' : ''} ${isOldStreak ? 'old-streak' : ''} ${blocked ? 'blocked' : ''} ${editMode ? 'editable' : ''} ${isFuture ? 'future' : ''}`}
+          className={calendarClass}
           onClick={() => handleDayClick(day)}
-          style={{ cursor: editMode && !isFuture ? 'pointer' : 'default' }}
+          style={{ cursor: editMode && !isFuture ? 'pointer' : 'default', zIndex: isFeriadoEspecial ? 2 : 1 }}
         >
           {day}
         </div>

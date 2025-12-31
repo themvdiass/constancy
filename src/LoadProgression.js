@@ -357,30 +357,32 @@ function LoadProgression({ darkMode, addMode }) {
             )}
             {exercises.length > 0 && (
               <div className="exercises-list">
-                {Object.entries(groupExercisesBySection()).map(([sectionName, sectionExercises]) => (
-                  <div key={sectionName} className="section-group">
-                    <h3 className="section-title">{sectionName}</h3>
-                    {sectionExercises.map((exercise) => (
-                      <div 
-                        key={exercise.id} 
-                        className="exercise-item"
-                        onClick={() => handleExerciseClick(exercise)}
-                      >
-                        <div className="exercise-info">
-                          <span className="exercise-name">{exercise.name}</span>
-                          <span className="exercise-weight">{getLatestWeight(exercise)} kg</span>
-                        </div>
-                        <button 
-                          className="delete-button"
-                          onClick={(e) => handleDeleteExercise(exercise.id, e)}
-                          title="Remover exercício"
+                {Object.entries(groupExercisesBySection())
+                  .sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'))
+                  .map(([sectionName, sectionExercises]) => (
+                    <div key={sectionName} className="section-group">
+                      <h3 className="section-title">{sectionName}</h3>
+                      {sectionExercises.map((exercise) => (
+                        <div 
+                          key={exercise.id} 
+                          className="exercise-item"
+                          onClick={() => handleExerciseClick(exercise)}
                         >
-                          <Icon icon="mdi:close" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                          <div className="exercise-info">
+                            <span className="exercise-name">{exercise.name}</span>
+                            <span className="exercise-weight">{getLatestWeight(exercise)} kg</span>
+                          </div>
+                          <button 
+                            className="delete-button"
+                            onClick={(e) => handleDeleteExercise(exercise.id, e)}
+                            title="Remover exercício"
+                          >
+                            <Icon icon="mdi:close" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
               </div>
             )}
           </>
