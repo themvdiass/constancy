@@ -409,6 +409,12 @@ h1 {
   color: #ff4500 !important;
   border: 2px solid #ffe0c5 !important;
 }
+  /* Unifica cor de feriado não marcado no modo escuro igual ao modo claro */
+  .App.dark-mode .calendar-day.holiday:not(.checked):not(.blocked) {
+    background: #ffe0c5 !important;
+    color: #ff4500 !important;
+    border: 2px solid #ffe0c5 !important;
+  }
 
 /* Garante que checked/blocked sempre prevaleçam sobre holiday */
 .calendar-day.checked,
@@ -426,9 +432,9 @@ h1 {
 }
 
 .App.dark-mode .calendar-day.holiday:not(.checked):not(.blocked) {
-  background: #a67c00 !important;
-  color: #ffe0c5 !important;
-  border: 2px solid #a67c00 !important;
+  background: #ffe0c5 !important;
+  color: #ff4500 !important;
+  border: 2px solid #ffe0c5 !important;
 }
 
 .calendar-day.weekend.checked {
@@ -463,6 +469,12 @@ h1 {
   color: white !important;
   font-weight: 700;
   opacity: 0.6;
+  }
+  /* Dias perdidos (old-streak) no modo escuro ficam cinza */
+  .App.dark-mode .calendar-day.old-streak {
+    background: #666 !important;
+    color: white !important;
+    opacity: 0.7;
 }
 
 /* Garante que feriados marcados fora da ofensiva fiquem cinza */
@@ -474,6 +486,29 @@ h1 {
   color: white !important;
   border: 2px solid #999 !important;
   opacity: 0.6 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+/* Feriados perdidos (old-streak) ficam cinza igual aos demais dias perdidos no modo escuro */
+.App.dark-mode .calendar-day.holiday.old-streak,
+.App.dark-mode .calendar-day.old-streak.holiday,
+.App.dark-mode .calendar-day.holiday.old-streak:not(.checked):not(.blocked),
+.App.dark-mode .calendar-day.old-streak.holiday:not(.checked):not(.blocked) {
+  background: #666 !important;
+  color: white !important;
+  border: 2px solid #666 !important;
+  opacity: 0.7 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Garante que feriados marcados em ofensivas passadas (checked + old-streak + holiday) fiquem cinza no modo escuro */
+.App.dark-mode .calendar-day.holiday.old-streak.checked,
+.App.dark-mode .calendar-day.old-streak.holiday.checked {
+  background: #666 !important;
+  color: white !important;
+  border: 2px solid #666 !important;
+  opacity: 0.7 !important;
   box-shadow: none !important;
   filter: none !important;
 }
