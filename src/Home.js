@@ -626,7 +626,6 @@ function Home({ darkMode }) {
             title="Progressão de carga"
           >
             <Icon icon="mdi:weight-lifter" className="icon" />
-            <span className="new-badge">NOVO</span>
           </button>
         </div>
       </div>

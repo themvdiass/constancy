@@ -405,15 +405,13 @@ h1 {
 
 
 .calendar-day.holiday:not(.checked):not(.blocked) {
-  background: #ffe0c5 !important;
+  background: #580000 !important;
   color: #ff4500 !important;
-  border: 2px solid #ffe0c5 !important;
 }
   /* Unifica cor de feriado não marcado no modo escuro igual ao modo claro */
   .App.dark-mode .calendar-day.holiday:not(.checked):not(.blocked) {
-    background: #ffe0c5 !important;
+    background: #580000 !important;
     color: #ff4500 !important;
-    border: 2px solid #ffe0c5 !important;
   }
 
 /* Garante que checked/blocked sempre prevaleçam sobre holiday */
@@ -432,9 +430,8 @@ h1 {
 }
 
 .App.dark-mode .calendar-day.holiday:not(.checked):not(.blocked) {
-  background: #ffe0c5 !important;
+  background: #580000 !important;
   color: #ff4500 !important;
-  border: 2px solid #ffe0c5 !important;
 }
 
 .calendar-day.weekend.checked {
