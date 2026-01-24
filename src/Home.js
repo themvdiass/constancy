@@ -39,6 +39,7 @@ function Home({ darkMode }) {
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [shakeGems, setShakeGems] = useState(false);
+  const [shakeStreak, setShakeStreak] = useState(false);
 
   const monthNames = [
     'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
@@ -309,19 +310,21 @@ function Home({ darkMode }) {
     today.setHours(0, 0, 0, 0);
     const dayOfWeek = today.getDay();
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    if (isHoliday(today) || isWeekend) {
+    if (isHoliday(today) || isWeekend || calculateStreak() === 0) {
       // Não faz nada, botão estará desabilitado
       return;
     }
-    if (gems > 0 && !isTodayBlocked() && !isTodayChecked() && calculateStreak() > 0) {
+    if (gems > 0 && !isTodayBlocked() && !isTodayChecked()) {
       const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
       const newBlockedDays = [...blockedDays, dateStr];
       setBlockedDays(newBlockedDays);
       localStorage.setItem('blockedDays', JSON.stringify(newBlockedDays));
     } else if (gems === 0) {
-      // Animação de shake apenas quando não há gemas disponíveis
-      setShakeGems(true);
-      setTimeout(() => setShakeGems(false), 600);
+      // Só anima se não for feriado, fim de semana ou fora de ofensiva
+      if (!isHoliday(today) && !isWeekend && calculateStreak() > 0) {
+        setShakeStreak(true);
+        setTimeout(() => setShakeStreak(false), 600);
+      }
     }
   };
 
@@ -513,7 +516,7 @@ function Home({ darkMode }) {
         </div>
         
         <div className="streak-counter">
-          <div className={`streak-number ${isTodayChecked() ? 'active' : isTodayBlocked() ? 'blocked' : 'inactive'}`}>{calculateStreak()}</div>
+          <div className={`streak-number ${isTodayChecked() ? 'active' : isTodayBlocked() ? 'blocked' : 'inactive'}${shakeStreak ? ' shake' : ''}`}>{calculateStreak()}</div>
           <div className="streak-label">{calculateStreak() === 1 ? 'dia de ofensiva' : 'dias de ofensiva'}</div>
         </div>
 
@@ -624,7 +627,7 @@ function Home({ darkMode }) {
             style={{ position: 'relative' }}
           >
             <Icon icon="ri:diamond-fill" className="icon" />
-            {((isHoliday(new Date()) || (() => { const d = new Date(); return d.getDay() === 0 || d.getDay() === 6; })() || calculateStreak() === 0) && (isTodayBlocked() === false && isTodayChecked() === false && gems > 0)) && (
+            {((isHoliday(new Date()) || (() => { const d = new Date(); return d.getDay() === 0 || d.getDay() === 6; })() || calculateStreak() === 0)) && (
               <Icon icon="mdi:lock" className="lock-icon" />
             )}
           </button>
