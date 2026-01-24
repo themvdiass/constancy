@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import './LockIcon.css';
 import './App.css';
 
 function Home({ darkMode }) {
@@ -432,20 +433,31 @@ function Home({ darkMode }) {
       const blocked = isBlocked(day);
       const isInStreak = checked && isInCurrentStreak(day);
       const isOldStreak = checked && !isInStreak;
-      
+
       const todayDate = new Date();
       todayDate.setHours(0, 0, 0, 0);
       const dayDate = new Date(currentYear, currentMonth, day);
       dayDate.setHours(0, 0, 0, 0);
       const isFuture = dayDate > todayDate;
-      
-      const todayIncomplete = !isTodayChecked() && !isTodayBlocked();
+
       const isPast = dayDate < todayDate;
 
       // Verifica se é feriado nacional, 24/12 ou 31/12
       const calendarDayDate = new Date(currentYear, currentMonth, day);
       calendarDayDate.setHours(0, 0, 0, 0);
       const isFeriadoEspecial = isHoliday(calendarDayDate);
+
+      // Novo: finais de semana não marcados, já passados, no meio da streak
+      let isWeekendInStreak = false;
+      if (
+        isWeekendDay &&
+        !checked &&
+        !blocked &&
+        isPast &&
+        isInCurrentStreak(day)
+      ) {
+        isWeekendInStreak = true;
+      }
 
       // Garante que a cor de feriado sempre prevaleça
       let calendarClass = `calendar-day`;
@@ -457,6 +469,7 @@ function Home({ darkMode }) {
       if (blocked) calendarClass += ' blocked';
       if (editMode) calendarClass += ' editable';
       if (isFuture) calendarClass += ' future';
+      if (isWeekendInStreak) calendarClass += ' weekend-in-streak';
 
       days.push(
         <div 
@@ -608,8 +621,12 @@ function Home({ darkMode }) {
                           ? 'Não é possível usar bloqueio em finais de semana'
                           : 'Usar bloqueio'
             }
+            style={{ position: 'relative' }}
           >
             <Icon icon="ri:diamond-fill" className="icon" />
+            {((isHoliday(new Date()) || (() => { const d = new Date(); return d.getDay() === 0 || d.getDay() === 6; })() || calculateStreak() === 0) && (isTodayBlocked() === false && isTodayChecked() === false && gems > 0)) && (
+              <Icon icon="mdi:lock" className="lock-icon" />
+            )}
           </button>
 
           <button 

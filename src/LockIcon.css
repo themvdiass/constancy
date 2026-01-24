@@ -1,0 +1,43 @@
+.lock-tooltip-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.lock-tooltip {
+  display: none;
+  position: absolute;
+  top: -38px;
+  right: -10px;
+  background: #222;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  z-index: 10;
+  opacity: 0.95;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  transition: opacity 0.2s;
+}
+
+
+/* Ícone de cadeado pequeno no canto superior direito do botão de bloqueio desabilitado */
+.block-button .lock-icon {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 15px;
+  height: 15px;
+  color: #888;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 2;
+}
+.App.dark-mode .block-button .lock-icon {
+  color: #888;
+}

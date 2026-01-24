@@ -1,3 +1,17 @@
+/* Finais de semana não marcados no meio da ofensiva */
+
+.calendar-day.weekend-in-streak {
+  background: #ffe0c5 !important;
+  color: #ff4500 !important;
+  border: 2px solid #ffe0c5 !important;
+}
+
+/* Modo escuro para weekend-in-streak */
+.App.dark-mode .calendar-day.weekend-in-streak {
+  background: #580000 !important;
+  color: #ffffff !important;
+  border: 2px solid #580000 !important;
+}
 .App {
   min-height: 100vh;
   display: flex;
