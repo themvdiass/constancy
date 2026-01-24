@@ -437,7 +437,8 @@ function Home({ darkMode }) {
       if (!todayCheck && !todayBlock) {
         streakStart.setDate(streakStart.getDate() - 1);
       }
-      while (true) {
+      let safety = 0;
+      while (safety < 1000) {
         const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
         const hasCheck = checkedDays.includes(dateStr);
         const hasBlock = blockedDays.includes(dateStr);
@@ -451,17 +452,23 @@ function Home({ darkMode }) {
         } else {
           break;
         }
+        safety++;
       }
       streakStart.setDate(streakStart.getDate() + 1);
-      // Avançar até o primeiro dia marcado (igual ao formatStreakStartDate)
-      while (true) {
-        const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
-        const hasCheck = checkedDays.includes(dateStr);
-        const hasBlock = blockedDays.includes(dateStr);
-        if (hasCheck || hasBlock) {
-          break;
+      // Só avança se houver pelo menos um dia marcado/bloqueado
+      const hasAny = checkedDays.length > 0 || blockedDays.length > 0;
+      if (hasAny) {
+        safety = 0;
+        while (safety < 1000) {
+          const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
+          const hasCheck = checkedDays.includes(dateStr);
+          const hasBlock = blockedDays.includes(dateStr);
+          if (hasCheck || hasBlock) {
+            break;
+          }
+          streakStart.setDate(streakStart.getDate() + 1);
+          safety++;
         }
-        streakStart.setDate(streakStart.getDate() + 1);
       }
       streakStartDate = new Date(streakStart);
       streakStartDate.setHours(0, 0, 0, 0);
