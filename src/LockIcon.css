@@ -31,12 +31,19 @@
   position: absolute;
   top: 6px;
   right: 8px;
-  width: 15px;
-  height: 15px;
-  color: #888;
-  opacity: 0.85;
+  width: 10px;
+  height: 10px;
+  color: #fff;
+  opacity: 1;
   pointer-events: none;
   z-index: 2;
+}
+
+.App .block-button .lock-icon {
+  color: #fff;
+}
+.App.dark-mode .block-button .lock-icon {
+  color: #fff;
 }
 .App.dark-mode .block-button .lock-icon {
   color: #888;

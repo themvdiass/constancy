@@ -711,7 +711,7 @@ h1 {
   flex: 1;
   padding: 15px;
   font-size: 1.5rem;
-  color: white;
+  color: rgb(243, 243, 243);
   background: #6c63ff;
   border: none;
   border-radius: 12px;
