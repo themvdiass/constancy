@@ -440,11 +440,10 @@ function Home({ darkMode }) {
     }
     // Avança até o próximo múltiplo de 15
     while ((streakSim % 15) !== 0) {
-      const dayOfWeek = milestoneDate.getDay();
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
       const isFeriado = isHoliday(milestoneDate);
       const dateStr = `${milestoneDate.getFullYear()}-${String(milestoneDate.getMonth() + 1).padStart(2, '0')}-${String(milestoneDate.getDate()).padStart(2, '0')}`;
-      if (!isWeekend && !isFeriado && !blockedDays.includes(dateStr)) {
+      // Só pula se for feriado ou bloqueado
+      if (!isFeriado && !blockedDays.includes(dateStr)) {
         streakSim++;
       }
       if ((streakSim % 15) !== 0) {
@@ -469,6 +468,9 @@ function Home({ darkMode }) {
       // Marcação de check-in e bloqueio
       if (isChecked(day)) calendarClass += ' checked';
       if (isBlocked(day)) calendarClass += ' blocked';
+      // Marcação de hoje
+      const isToday = dayDate.getTime() === todayDate.getTime();
+      if (isToday) calendarClass += ' today';
       const dayString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       // Renderiza o ícone de milestone
       const isMilestoneDay = dayString === milestoneDateStr;
@@ -487,7 +489,7 @@ function Home({ darkMode }) {
               position: 'absolute',
               top: 5,
               right: 5,
-              fontSize: 13,
+              fontSize: 10,
               color: iconColor,
               zIndex: 2,
               pointerEvents: 'none',
@@ -496,7 +498,7 @@ function Home({ darkMode }) {
               justifyContent: 'center',
             }}
           >
-            <Icon icon="ri:diamond-fill" style={{ color: iconColor, fontSize: 13 }} />
+            <Icon icon="ri:diamond-fill" style={{ color: iconColor, fontSize: 10 }} />
           </span>
         );
       }
