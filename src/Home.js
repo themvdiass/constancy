@@ -475,7 +475,8 @@ function Home({ darkMode }) {
       // Renderiza o ícone de milestone
       const isMilestoneDay = dayString === milestoneDateStr;
       let milestoneIcon = null;
-      if (isMilestoneDay) {
+      // Não mostra o ícone se streak for 0 e o milestone for o dia atual
+      if (isMilestoneDay && !(streak === 0 && isToday)) {
         // Branco se já fez check-in, cinza claro se não (cinza mais escuro no darkMode)
         let iconColor;
         if (checkedDays.includes(dayString)) {
@@ -489,7 +490,7 @@ function Home({ darkMode }) {
               position: 'absolute',
               top: 5,
               right: 5,
-              fontSize: 10,
+              fontSize: 8,
               color: iconColor,
               zIndex: 2,
               pointerEvents: 'none',
@@ -498,7 +499,7 @@ function Home({ darkMode }) {
               justifyContent: 'center',
             }}
           >
-            <Icon icon="ri:diamond-fill" style={{ color: iconColor, fontSize: 10 }} />
+            <Icon icon="ri:diamond-fill" style={{ color: iconColor, fontSize: 8 }} />
           </span>
         );
       }
