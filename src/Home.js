@@ -224,9 +224,9 @@ function Home({ darkMode }) {
     let currentDate = new Date(today);
 
     const todayCheck = isTodayChecked();
-    const todayBlock = isTodayBlocked();
 
-    if (!todayCheck && !todayBlock) {
+    // Se não fez check-in hoje, volta para o último dia válido
+    if (!todayCheck) {
       currentDate.setDate(currentDate.getDate() - 1);
     }
 
@@ -237,9 +237,8 @@ function Home({ darkMode }) {
       const isFeriado = isHoliday(currentDate);
 
       const hasCheck = checkedDays.includes(dateStr);
-      const hasBlock = blockedDays.includes(dateStr);
 
-      if (hasCheck || hasBlock) {
+      if (hasCheck) {
         streak++;
         currentDate.setDate(currentDate.getDate() - 1);
       } else if (isWeekend || isFeriado) {
@@ -269,13 +268,11 @@ function Home({ darkMode }) {
 
     while (true) {
       const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
-      const dayOfWeek = streakStart.getDay(); // 0 = domingo, 6 = sábado
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      const isFeriado = isHoliday(streakStart);
-
       const hasCheck = checkedDays.includes(dateStr);
       const hasBlock = blockedDays.includes(dateStr);
-
+      const dayOfWeek = streakStart.getDay();
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      const isFeriado = isHoliday(streakStart);
       if (hasCheck || hasBlock) {
         streakStart.setDate(streakStart.getDate() - 1);
       } else if (isWeekend || isFeriado) {
@@ -319,6 +316,7 @@ function Home({ darkMode }) {
       const newBlockedDays = [...blockedDays, dateStr];
       setBlockedDays(newBlockedDays);
       localStorage.setItem('blockedDays', JSON.stringify(newBlockedDays));
+      // Não altera streak, não faz shake de gemas nem streak
     } else if (gems === 0) {
       // Só anima se não for feriado, fim de semana ou fora de ofensiva
       if (!isHoliday(today) && !isWeekend && calculateStreak() > 0) {
@@ -425,118 +423,92 @@ function Home({ darkMode }) {
       days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
     }
 
-    // Calcular o início da streak para limitar o intervalo
-    // Usar a mesma lógica do formatStreakStartDate para garantir referência única
-    let streakStartDate = null;
-    {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayCheck = isTodayChecked();
-      const todayBlock = isTodayBlocked();
-      let streakStart = new Date(today);
-      if (!todayCheck && !todayBlock) {
-        streakStart.setDate(streakStart.getDate() - 1);
+    // Cálculo correto do milestone: simula a streak real a partir do próximo milestone
+    const streak = calculateStreak();
+    let streakSim = streak;
+    let milestoneDate = new Date();
+    milestoneDate.setHours(0, 0, 0, 0);
+    // Se hoje já está marcado (check-in ou bloqueio), começa a simulação a partir de amanhã
+    const todayStr = `${milestoneDate.getFullYear()}-${String(milestoneDate.getMonth() + 1).padStart(2, '0')}-${String(milestoneDate.getDate()).padStart(2, '0')}`;
+    if (checkedDays.includes(todayStr) || blockedDays.includes(todayStr)) {
+      // Se hoje é o milestone, recalcula para o próximo ciclo de 15
+      if (streak % 15 === 0) {
+        streakSim = streak;
+      } else {
+        milestoneDate.setDate(milestoneDate.getDate() + 1);
       }
-      let safety = 0;
-      while (safety < 1000) {
-        const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
-        const hasCheck = checkedDays.includes(dateStr);
-        const hasBlock = blockedDays.includes(dateStr);
-        const dayOfWeek = streakStart.getDay();
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-        const isFeriado = isHoliday(streakStart);
-        if (hasCheck || hasBlock) {
-          streakStart.setDate(streakStart.getDate() - 1);
-        } else if (isWeekend || isFeriado) {
-          streakStart.setDate(streakStart.getDate() - 1);
-        } else {
-          break;
-        }
-        safety++;
-      }
-      streakStart.setDate(streakStart.getDate() + 1);
-      // Só avança se houver pelo menos um dia marcado/bloqueado
-      const hasAny = checkedDays.length > 0 || blockedDays.length > 0;
-      if (hasAny) {
-        safety = 0;
-        while (safety < 1000) {
-          const dateStr = `${streakStart.getFullYear()}-${String(streakStart.getMonth() + 1).padStart(2, '0')}-${String(streakStart.getDate()).padStart(2, '0')}`;
-          const hasCheck = checkedDays.includes(dateStr);
-          const hasBlock = blockedDays.includes(dateStr);
-          if (hasCheck || hasBlock) {
-            break;
-          }
-          streakStart.setDate(streakStart.getDate() + 1);
-          safety++;
-        }
-      }
-      streakStartDate = new Date(streakStart);
-      streakStartDate.setHours(0, 0, 0, 0);
     }
+    // Avança até o próximo múltiplo de 15
+    while ((streakSim % 15) !== 0) {
+      const dayOfWeek = milestoneDate.getDay();
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      const isFeriado = isHoliday(milestoneDate);
+      const dateStr = `${milestoneDate.getFullYear()}-${String(milestoneDate.getMonth() + 1).padStart(2, '0')}-${String(milestoneDate.getDate()).padStart(2, '0')}`;
+      if (!isWeekend && !isFeriado && !blockedDays.includes(dateStr)) {
+        streakSim++;
+      }
+      if ((streakSim % 15) !== 0) {
+        milestoneDate.setDate(milestoneDate.getDate() + 1);
+      }
+    }
+    const milestoneDateStr = `${milestoneDate.getFullYear()}-${String(milestoneDate.getMonth() + 1).padStart(2, '0')}-${String(milestoneDate.getDate()).padStart(2, '0')}`;
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dayOfWeek = (firstDay + day - 1) % 7;
       const isWeekendDay = isWeekend(dayOfWeek);
-      const today = new Date();
-      const isToday = day === today.getDate() && 
-                      currentMonth === today.getMonth() && 
-                      currentYear === today.getFullYear();
-      const checked = isChecked(day);
-      const blocked = isBlocked(day);
-      const isInStreak = checked && isInCurrentStreak(day);
-      const isOldStreak = checked && !isInStreak;
-
       const todayDate = new Date();
       todayDate.setHours(0, 0, 0, 0);
       const dayDate = new Date(currentYear, currentMonth, day);
       dayDate.setHours(0, 0, 0, 0);
       const isFuture = dayDate > todayDate;
-      const isPast = dayDate < todayDate;
-
-      // Verifica se é feriado nacional, 24/12 ou 31/12
-      const calendarDayDate = new Date(currentYear, currentMonth, day);
-      calendarDayDate.setHours(0, 0, 0, 0);
-      const isFeriadoEspecial = isHoliday(calendarDayDate);
-
-      // Finais de semana não marcados, já passados, APÓS OU IGUAIS ao início da streak (comparação por string ISO)
-      let isWeekendInStreak = false;
-      if (isWeekendDay && !checked && !blocked && isPast && streakStartDate) {
-        const dayISO = dayDate.toISOString().slice(0, 10);
-        const streakStartISO = streakStartDate.toISOString().slice(0, 10);
-        const todayISO = todayDate.toISOString().slice(0, 10);
-        // Só marca se o dia for igual ou depois do início da streak
-        if (
-          (dayISO === streakStartISO || dayISO > streakStartISO) &&
-          dayISO <= todayISO
-        ) {
-          isWeekendInStreak = true;
-        } else {
-          isWeekendInStreak = false;
-        }
-      } else {
-        isWeekendInStreak = false;
-      }
-
-      // Garante que a cor de feriado sempre prevaleça
+      const isFeriadoEspecial = isHoliday(dayDate);
       let calendarClass = `calendar-day`;
       if (isWeekendDay) calendarClass += ' weekend';
       if (isFeriadoEspecial) calendarClass += ' holiday';
-      if (isToday) calendarClass += ' today';
-      if (isInStreak) calendarClass += ' checked';
-      if (isOldStreak) calendarClass += ' old-streak';
-      if (blocked) calendarClass += ' blocked';
-      if (editMode) calendarClass += ' editable';
       if (isFuture) calendarClass += ' future';
-      if (isWeekendInStreak) calendarClass += ' weekend-in-streak';
-
+      // Marcação de check-in e bloqueio
+      if (isChecked(day)) calendarClass += ' checked';
+      if (isBlocked(day)) calendarClass += ' blocked';
+      const dayString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      // Renderiza o ícone de milestone
+      const isMilestoneDay = dayString === milestoneDateStr;
+      let milestoneIcon = null;
+      if (isMilestoneDay) {
+        // Branco se já fez check-in, cinza claro se não (cinza mais escuro no darkMode)
+        let iconColor;
+        if (checkedDays.includes(dayString)) {
+          iconColor = '#fff';
+        } else {
+          iconColor = darkMode ? '#888' : '#D3D3D3';
+        }
+        milestoneIcon = (
+          <span
+            style={{
+              position: 'absolute',
+              top: 5,
+              right: 5,
+              fontSize: 13,
+              color: iconColor,
+              zIndex: 2,
+              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Icon icon="ri:diamond-fill" style={{ color: iconColor, fontSize: 13 }} />
+          </span>
+        );
+      }
       days.push(
         <div 
           key={day} 
           className={calendarClass}
           onClick={() => handleDayClick(day)}
-          style={{ cursor: editMode && !isFuture ? 'pointer' : 'default', zIndex: isFeriadoEspecial ? 2 : 1 }}
+          style={{ cursor: editMode && !isFuture ? 'pointer' : 'default', zIndex: isFeriadoEspecial ? 2 : 1, position: 'relative' }}
         >
           {day}
+          {milestoneIcon}
         </div>
       );
     }

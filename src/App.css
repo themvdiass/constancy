@@ -590,14 +590,6 @@ h1 {
 
 /* Remove qualquer efeito visual de clique dos dias do calendário fora do modo edição */
 /* Remove apenas o efeito de clique, sem alterar cor ou texto */
-.calendar-day:not(.editable):active,
-.calendar-day:not(.editable):focus {
-  /* background: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  filter: none !important;
-  transition: none !important; */
-}
 
 /* Mensagem Motivacional */
 .motivation-message {
@@ -770,9 +762,6 @@ h1 {
   color: inherit;
 }
 
-.edit-button:hover {
-  /* Sem animação */
-}
 
 .edit-button:focus {
   outline: none;
@@ -784,9 +773,6 @@ h1 {
   border-color: #FF4500;
 }
 
-.edit-button.active:hover {
-  /* background: #cc3700; */
-}
 
 .App.dark-mode .edit-button {
   background: #3a3a3a;
@@ -794,9 +780,6 @@ h1 {
   border: 2px solid rgba(150, 150, 150, 0.3);
 }
 
-.App.dark-mode .edit-button:hover {
-  /* Sem animação */
-}
 
 .App.dark-mode .edit-button.active {
   background: #FF4500;
@@ -804,9 +787,6 @@ h1 {
   border-color: #FF4500;
 }
 
-.App.dark-mode .edit-button.active:hover {
-  /* background: #FF4500; */
-}
 
 /* Botão de Tema */
 .theme-toggle-button {
@@ -830,9 +810,6 @@ h1 {
   color: inherit;
 }
 
-.theme-toggle-button:hover {
-  /* Sem animação */
-}
 
 .theme-toggle-button:focus {
   outline: none;
