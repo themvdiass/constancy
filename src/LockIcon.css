@@ -54,3 +54,8 @@
   border-radius: 8px;
   box-sizing: border-box;
 }
+
+.calendar-day.weekend:not(.checked):not(.blocked) {
+  background: #232323;
+  color: #ff5a1f;
+}
