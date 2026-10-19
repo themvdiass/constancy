@@ -353,7 +353,7 @@ function App() {
           <div className="welcome-tools">
             <div className="welcome-tool-icons">
               <span className="shield-badge" aria-label={`${shieldsAvailable} ${shieldsAvailable === 1 ? 'raio disponível' : 'raios disponíveis'}`} title={`${shieldsAvailable} ${shieldsAvailable === 1 ? 'raio disponível' : 'raios disponíveis'}`}><Icon icon="mdi:lightning-bolt" aria-hidden="true" /><strong>{shieldsAvailable}</strong></span>
-              <button className="settings-icon" type="button" onClick={openSettings} aria-label="Abrir configurações" title="Configurações"><Icon icon="mdi:cog" aria-hidden="true" /></button>
+              {!isWeeklyTargetLocked && <button className="settings-icon" type="button" onClick={openSettings} aria-label="Abrir configurações" title="Configurações"><Icon icon="mdi:cog" aria-hidden="true" /></button>}
             </div>
             <div className="week-chip"><span className="week-chip-icon">✳</span><span>Meta semanal<br /><strong>{thisWeek.attendedWorkdays}/{thisWeek.required} dias úteis</strong></span></div>
           </div>
