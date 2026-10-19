@@ -15,10 +15,7 @@
         window.history.scrollRestoration = 'manual';
       }
 
-      window.addEventListener('pageshow', function resetInitialScroll(event) {
-        const navigation = performance.getEntriesByType('navigation')[0];
-        if (event.persisted || navigation?.type === 'back_forward') return;
-
+      window.addEventListener('pageshow', function resetInitialScroll() {
         const scrollToPageTop = function () {
           window.scrollTo(0, 0);
           document.documentElement.scrollTop = 0;
