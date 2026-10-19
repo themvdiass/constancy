@@ -10,6 +10,22 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Lightining" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script>
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+
+      window.addEventListener('pageshow', function resetInitialScroll(event) {
+        const navigation = performance.getEntriesByType('navigation')[0];
+        if (event.persisted || navigation?.type === 'back_forward') return;
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            window.scrollTo(0, 0);
+          });
+        });
+      }, { once: true });
+    </script>
     
     <!-- Start Single Page Apps for GitHub Pages -->
     <script type="text/javascript">

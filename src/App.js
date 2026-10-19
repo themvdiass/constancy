@@ -72,6 +72,21 @@ function getWeekDetails(startKey, data) {
   };
 }
 
+function getTrailingWeekdayWorkoutDates(startKey, data) {
+  const dates = Array.from({ length: 5 }, (_, index) => {
+    const date = parseDate(startKey);
+    date.setDate(date.getDate() + index);
+    return dateKey(date);
+  }).filter((key) => !nationalHolidayFor(key));
+
+  const trailingDates = [];
+  for (let index = dates.length - 1; index >= 0; index -= 1) {
+    if (!data.workouts.includes(dates[index])) break;
+    trailingDates.unshift(dates[index]);
+  }
+  return trailingDates;
+}
+
 function readData() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -155,10 +170,9 @@ function App() {
       const details = getWeekDetails(startKey, data);
       const weekIsOver = weekEndKey(startKey) <= today;
       if ((!isCurrentWeek || weekIsOver) && !details.isComplete) {
-        // The first week of a streak is partial, so it does not need to meet the full target.
-        details.attendedDates.forEach((key) => {
-          if (key <= today) dates.add(key);
-        });
+        // An incomplete start week only contributes its consecutive weekday workouts
+        // that reach the final eligible workday of that week.
+        getTrailingWeekdayWorkoutDates(startKey, data).forEach((key) => dates.add(key));
         count = dates.size;
         break;
       }
@@ -189,8 +203,8 @@ function App() {
       const weekIsOver = weekEndKey(startKey) <= today;
       const attendedDates = details.attendedDates.filter((key) => key <= today);
       if (weekIsOver && !details.isComplete) {
-        // An incomplete week can start a new streak without meeting its full target.
-        run = attendedDates.length;
+        // An incomplete week can start a streak only from its trailing weekday run.
+        run = getTrailingWeekdayWorkoutDates(startKey, data).length;
       } else {
         run += attendedDates.length;
       }
