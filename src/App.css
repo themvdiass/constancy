@@ -206,5 +206,18 @@
   14% { color: transparent; transform: translate(1px, -1px) skewX(-1.5deg); }
 }
 
+/* Keep the first screen stable in iOS standalone mode and avoid adding the
+   safe-area inset twice to the content's top spacing. */
+@supports (min-height: 100svh) {
+  .app-shell { min-height: 100svh; }
+}
+@media (max-width: 520px) {
+  .page-wrap { padding-top: max(24px, env(safe-area-inset-top, 0px)); }
+  .welcome-row { min-height: 48px; }
+  .welcome-tools {
+    transform: translateY(calc(24px + env(safe-area-inset-top, 0px) - max(24px, env(safe-area-inset-top, 0px))));
+  }
+}
+
 .calendar-day.is-today { border: 2px solid #d2f56b; }
 .calendar-day.is-today::before { display: none; }
