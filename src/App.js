@@ -154,7 +154,14 @@ function App() {
       const startKey = dateKey(cursor);
       const details = getWeekDetails(startKey, data);
       const weekIsOver = weekEndKey(startKey) <= today;
-      if ((!isCurrentWeek || weekIsOver) && !details.isComplete) break;
+      if ((!isCurrentWeek || weekIsOver) && !details.isComplete) {
+        // The first week of a streak is partial, so it does not need to meet the full target.
+        details.attendedDates.forEach((key) => {
+          if (key <= today) dates.add(key);
+        });
+        count = dates.size;
+        break;
+      }
       details.attendedDates.forEach((key) => {
         if (key <= today) dates.add(key);
       });
@@ -180,12 +187,14 @@ function App() {
       const startKey = dateKey(cursor);
       const details = getWeekDetails(startKey, data);
       const weekIsOver = weekEndKey(startKey) <= today;
+      const attendedDates = details.attendedDates.filter((key) => key <= today);
       if (weekIsOver && !details.isComplete) {
-        run = 0;
+        // An incomplete week can start a new streak without meeting its full target.
+        run = attendedDates.length;
       } else {
-        run += details.attendedDates.filter((key) => key <= today).length;
-        best = Math.max(best, run);
+        run += attendedDates.length;
       }
+      best = Math.max(best, run);
       cursor.setDate(cursor.getDate() + 7);
     }
     return best;
