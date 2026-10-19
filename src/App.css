@@ -123,7 +123,7 @@
 .calendar-days { row-gap: 2px; }
 .calendar-day, .calendar-empty { position: relative; display: grid; place-items: center; justify-self: center; width: 100%; aspect-ratio: 1; height: auto; border: 1px solid transparent; border-radius: 11px; background: transparent; color: #aeb2aa; font-size: 12px; }
 .calendar-day { grid-template-rows: auto auto; align-content: center; }
-.day-number { align-self: center; line-height: 1; transform: translateY(-7px); }
+.day-number { align-self: center; line-height: 1; }
 .calendar-day-time { align-self: start; color: inherit; font-size: 6px; font-variant-numeric: tabular-nums; line-height: 1.2; opacity: .8; }
 .calendar-day.is-attended { background: #d2f56b; color: #171b11; font-weight: 700; }
 .calendar-day.is-attended.is-past-streak { border-color: #34382f; background: #22251f; color: #a3a99b; }
