@@ -19,11 +19,18 @@
         const navigation = performance.getEntriesByType('navigation')[0];
         if (event.persisted || navigation?.type === 'back_forward') return;
 
+        const scrollToPageTop = function () {
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+        };
+
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
-            window.scrollTo(0, 0);
+            scrollToPageTop();
           });
         });
+        window.setTimeout(scrollToPageTop, 250);
       }, { once: true });
     </script>
     
