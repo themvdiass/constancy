@@ -45,13 +45,13 @@ const addMonthsToKey = (key, months) => {
 };
 
 function getWeekDetails(startKey, data) {
-  const dates = Array.from({ length: 5 }, (_, index) => {
+  const dates = Array.from({ length: 7 }, (_, index) => {
     const date = parseDate(startKey);
     date.setDate(date.getDate() + index);
     return dateKey(date);
   });
-  const holidayDates = dates.filter((key) => nationalHolidayFor(key));
-  const workDates = dates.filter((key) => !nationalHolidayFor(key));
+  const weekdays = dates.slice(0, 5);
+  const holidayDates = weekdays.filter((key) => nationalHolidayFor(key));
   const holidayCount = holidayDates.length;
   const shieldCount = data.shieldUses.filter((key) => weekKey(key) === startKey).length;
   // A saved target affects the week containing its effective date and later weeks,
@@ -60,7 +60,12 @@ function getWeekDetails(startKey, data) {
   const targetSetting = [...(data.weeklyTargetHistory || [])].reverse().find((setting) => setting.effectiveFrom <= settingDate);
   const effectiveTarget = targetSetting?.target ?? 5;
   const required = Math.max(0, effectiveTarget - holidayCount - shieldCount);
-  const attendedWorkdays = workDates.filter((key) => data.workouts.includes(key)).length;
+  // Weekend workouts can make up a missed weekday toward the weekly target.
+  // Holidays lower the target above and are excluded from the attendance count,
+  // so training on a holiday does not count twice.
+  const attendedWorkdays = dates
+    .filter((key) => !nationalHolidayFor(key) && data.workouts.includes(key))
+    .length;
   const attendedDates = data.workouts.filter((key) => weekKey(key) === startKey);
   return {
     required,
